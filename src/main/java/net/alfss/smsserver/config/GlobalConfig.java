@@ -45,33 +45,33 @@ public class GlobalConfig {
     public GlobalConfig(XMLConfiguration xml_config) {
 
         //sms_servers
-        List<HierarchicalConfiguration> xmlChannelConfigList = xml_config.configurationsAt("sms_servers.server");
+        List<HierarchicalConfiguration> xmlChannelConfigList = xml_config.configurationsAt("sms-servers.server");
         for (HierarchicalConfiguration xmlChannelConfig: xmlChannelConfigList) {
             ChannelConfig channelConfig = new ChannelConfig(xmlChannelConfig);
             channelConfigList.put(channelConfig.getChannel(), channelConfig);
         }
 
         //channel_users
-        xmlChannelConfigList = xml_config.configurationsAt("channel_users.user");
+        xmlChannelConfigList = xml_config.configurationsAt("channel-users.user");
         for (HierarchicalConfiguration xmlChannelConfig: xmlChannelConfigList) {
             UserConfig userConfig  = new UserConfig(xmlChannelConfig);
             userConfigList.put(userConfig.getUserName(), userConfig);
         }
 
         //rabbit
-        setRabbitHost(xml_config.getString("rabbit_host", "localhost"));
-        setRabbitPort(xml_config.getInt("rabbit_port", 5672));
-        setRabbitVhost(xml_config.getString("rabbit_vhost", "/smsserver"));
-        setRabbitQueue(xml_config.getString("rabbit_queue", "message"));
-        setRabbitUser(xml_config.getString("rabbit_user", "guest"));
-        setRabbitPassword(xml_config.getString("rabbit_password", "guest"));
+        setRabbitHost(xml_config.getString("rabbit-host", "localhost"));
+        setRabbitPort(xml_config.getInt("rabbit-port", 5672));
+        setRabbitVhost(xml_config.getString("rabbit-vhost", "/smsserver"));
+        setRabbitQueue(xml_config.getString("rabbit-queue", "message"));
+        setRabbitUser(xml_config.getString("rabbit-user", "guest"));
+        setRabbitPassword(xml_config.getString("rabbit-password", "guest"));
         //redis
-        setRedisPassword(xml_config.getString("redis_password", null));
-        setRedisMaxPool(xml_config.getInt("redis_max_pool", 12));
-        setRedisTimeOut(xml_config.getInt("redis_timeout", 10));
-        setRedisHost(xml_config.getString("redis_host", "localhost"));
-        setRedisPort(xml_config.getInt("redis_port", 6379));
-        setRedisDatabase(xml_config.getInt("redis_db", 0));
+        setRedisPassword(xml_config.getString("redis-password", null));
+        setRedisMaxPool(xml_config.getInt("redis-max-pool", 12));
+        setRedisTimeOut(xml_config.getInt("redis-timeout", 10));
+        setRedisHost(xml_config.getString("redis-host", "localhost"));
+        setRedisPort(xml_config.getInt("redis-port", 6379));
+        setRedisDatabase(xml_config.getInt("redis-db", 0));
         //jetty
         setJettyAddress(xml_config.getString("http-address", "0.0.0.0"));
         setJettyPort(xml_config.getInt("http-port", 8080));

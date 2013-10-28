@@ -35,7 +35,7 @@ main config:
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <!--sms servers settings-->
-    <sms_servers>
+    <sms-servers>
         <server>
             <channel>smscru</channel>
             <channel-queue>smscru</channel-queue>
@@ -57,27 +57,27 @@ main config:
             <wait-resend-timeout>5</wait-resend-timeout>
             <is-fake-channel>false</is-fake-channel>
         </server>
-    </sms_servers>
-    <channel_users>
+    </sms-servers>
+    <channel-users>
         <user>
             <username>user1</username>
             <password>test</password>
             <channel>smscru</channel>
         </user>
-    </channel_users>
+    </channel-users>
     <!--rabbit-->
-    <rabbit-host>10.211.55.254</rabbit_host>
-    <rabbit-port>5672</rabbit_port>
-    <rabbit-vhost>/</rabbit_vhost>
-    <rabbit-queue>message</rabbit_queue>
-    <rabbit-user>guest</rabbit_user>
-    <rabbit-password>guest</rabbit_password>
+    <rabbit-host>10.211.55.254</rabbit-host>
+    <rabbit-port>5672</rabbit-port>
+    <rabbit-vhost>/</rabbit-vhost>
+    <rabbit-queue>message</rabbit-queue>
+    <rabbit-user>guest</rabbit-user>
+    <rabbit-password>guest</rabbit-password>
     <!--redis-->
-    <redis-max-pool>20</redis_max_pool>
-    <redis-timeout>10</redis_timeout>
-    <redis-host>10.211.55.254</redis_host>
-    <redis-port>6379</redis_port>
-    <redis-db>0</redis_db>
+    <redis-max-pool>20</redis-max-pool>
+    <redis-timeout>10</redis-timeout>
+    <redis-host>10.211.55.254</redis-host>
+    <redis-port>6379</redis-port>
+    <redis-db>0</redis-db>
     <!--<redis-password></redis-password>-->
     <!--http -->
     <http-address>0.0.0.0</http-address>
@@ -90,7 +90,7 @@ main config:
 </configuration>
 ```
 
-sms_servers sections:
+sms-servers sections:
 
 * server - configure connect channel to smpp
     * channel - channel name
@@ -114,7 +114,8 @@ sms_servers sections:
     * is-fake-channel - fake or real channel (default false)
 
 
-channel_users sections:
+channel-users sections:
+
 * user - user for http interface
     * username - name user
     * password - password user
