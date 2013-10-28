@@ -12,8 +12,8 @@ implementation smpp transmitter server
 * java 1.7
 * commons-daemon >= 1.0.7
 * jsvc >= 1.0.7
-* rabbitmq >= 3.0
-* redis >= 2.6
+* rabbitmq >= 3.0 (server only)
+* redis >= 2.6 (server only)
 
 
 ## Create jar
