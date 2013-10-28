@@ -7,11 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * User: alfss
@@ -26,8 +25,8 @@ public class SendSms {
     @Autowired
     private ChannelMessageServices channelMessageServices;
 
-    @RequestMapping(value = "/api/kannel/sendsms", method = {RequestMethod.GET})
-    public ResponseEntity<String> sendsms(@RequestParam("username") String userName,
+    @RequestMapping(value = "/api/sendsms/simple", method = {RequestMethod.GET})
+    public ResponseEntity<String> sendsmsSimple(@RequestParam("username") String userName,
                                           @RequestParam("password") String password,
                                           @RequestParam("text") String messageText,
                                           @RequestParam("to") String phone) {
@@ -46,5 +45,29 @@ public class SendSms {
             return new ResponseEntity<String>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    /*
+    {"phone":"79062783751","messagetext":"Привет это текст", "priority":"0", "channel":"smscru"}
+     */
+
+    @RequestMapping(value = "/api/sendsms/json_post", method = {RequestMethod.POST})
+    public ResponseEntity<String> sendsmsJsonPost(@RequestBody String json,
+                                                  @RequestHeader Map<String,String> header) {
+
+        String userName = header.get("X-AUTH-USER");
+        String password = header.get("X-AUTH-PASSWORD");
+
+        if(!userServices.checkUserPassword(userName, password)) {
+            return new ResponseEntity<String>("{\"status\":\"ERROR\", \"message_error\":\"Invalid username or password\"}", HttpStatus.FORBIDDEN);
+        }
+
+        ChannelUser channelUser = userServices.getChannelUser(userName);
+        if (channelMessageServices.pushJsonMessageToChannel(json, channelUser)) {
+            return new ResponseEntity<String>("{\"status\":\"OK\"}", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<String>("{\"status\":\"ERROR\", \"message_error\":\"Error message format\"}", HttpStatus.FORBIDDEN);
+    }
+
 
 }

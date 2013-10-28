@@ -326,7 +326,7 @@ exit 0
 
 ## Example send message HTTP
 ```
-curl http://localhost:8082/api/kannel/sendsms\?username\=alfss1\&to\=7*********\&password\=test\&text\=%04%1F%04%40%048%042%045%04B%00
+curl http://localhost:8082/api/sendsms/simple\?username\=alfss1\&to\=7*********\&password\=test\&text\=%04%1F%04%40%048%042%045%04B%00
 ```
 
 * username - user name
@@ -334,6 +334,27 @@ curl http://localhost:8082/api/kannel/sendsms\?username\=alfss1\&to\=7*********\
 * to - destination address
 * text - text UTF-16BE code to url encode
 
+
+## Example send message HTTP POST
+
+URL:
+
+```
+http://localhost:8082/api/sendsms/json_post
+```
+
+Set auth header
+
+```
+X-AUTH-USER:alfss1
+X-AUTH-PASSWORD:test
+```
+
+Json Object
+
+```
+{"phone":"79062783751","messagetext":"Hello text", "priority":"0", "channel":"smscru"}
+```
 
 
 ## Example send message RabbitMQ

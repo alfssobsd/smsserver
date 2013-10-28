@@ -1,10 +1,13 @@
 package net.alfss.smsserver.http.services;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.alfss.smsserver.http.dao.ConfigDao;
 import net.alfss.smsserver.http.dao.RedisClientDao;
 import net.alfss.smsserver.http.domain.Channel;
 import net.alfss.smsserver.http.domain.ChannelMessage;
+import net.alfss.smsserver.http.domain.ChannelUser;
 import net.alfss.smsserver.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,24 @@ public class ChannelMessageServices {
         message.setChannel(channelName);
         message.setPriority(1);
         redisClientDao.pushMessageToChannel(message);
+    }
+
+    public boolean pushJsonMessageToChannel(String json, ChannelUser channelUser) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            Message message = mapper.readValue(json, Message.class);
+            message.setChannel(channelUser.getChannel().getChannelName());
+            redisClientDao.pushMessageToChannel(message);
+        } catch (JsonMappingException e) {
+            return false;
+        } catch (JsonParseException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        } catch (NullPointerException e) {
+            return false;
+        }
+        return true;
     }
 
     public List<ChannelMessage> getAllMessageFromChannel(Channel channel) {
