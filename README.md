@@ -66,19 +66,19 @@ main config:
         </user>
     </channel_users>
     <!--rabbit-->
-    <rabbit_host>10.211.55.254</rabbit_host>
-    <rabbit_port>5672</rabbit_port>
-    <rabbit_vhost>/</rabbit_vhost>
-    <rabbit_queue>message</rabbit_queue>
-    <rabbit_user>guest</rabbit_user>
-    <rabbit_password>guest</rabbit_password>
+    <rabbit-host>10.211.55.254</rabbit_host>
+    <rabbit-port>5672</rabbit_port>
+    <rabbit-vhost>/</rabbit_vhost>
+    <rabbit-queue>message</rabbit_queue>
+    <rabbit-user>guest</rabbit_user>
+    <rabbit-password>guest</rabbit_password>
     <!--redis-->
-    <redis_max_pool>20</redis_max_pool>
-    <redis_timeout>10</redis_timeout>
-    <redis_host>10.211.55.254</redis_host>
-    <redis_port>6379</redis_port>
-    <redis_db>0</redis_db>
-    <!--<redis_password></redis_password>-->
+    <redis-max-pool>20</redis_max_pool>
+    <redis-timeout>10</redis_timeout>
+    <redis-host>10.211.55.254</redis_host>
+    <redis-port>6379</redis_port>
+    <redis-db>0</redis_db>
+    <!--<redis-password></redis-password>-->
     <!--http -->
     <http-address>0.0.0.0</http-address>
     <http-port>8082</http-port>
@@ -93,50 +93,50 @@ main config:
 sms_servers sections:
 
 * server - configure connect channel to smpp
-* * channel - channel name
-* * channel-queue - queue name
-* * host - address smpp host
-* * send-port - port smpp host
-* * username - auth smpp user
-* * password - password  smpp user
-* * enable-playload - enable playload mode (default false)
-* * source-addr - source address in sms
-* * source-addr-ton - source address TON
-* * source-addr-npi - source address NPI
-* * dest-addr-ton - destination address TON
-* * dest-addr-npi - destination address NPi
-* * system-type - system type
-* * recconnect-timeout - recconnect timout to smpp server
-* * max-message - max multipart sms
-* * message-per-second - max message per seconds to smpp server
-* * enquire-link-interval - enquire link interval
-* * wait-resend-timeout - timout if got warning from smpp server
-* * is-fake-channel - fake or real channel (default false)
+    * channel - channel name
+    * channel-queue - queue name
+    * host - address smpp host
+    * send-port - port smpp host
+    * username - auth smpp user
+    * password - password  smpp user
+    * enable-playload - enable playload mode (default false)
+    * source-addr - source address in sms
+    * source-addr-ton - source address TON
+    * source-addr-npi - source address NPI
+    * dest-addr-ton - destination address TON
+    * dest-addr-npi - destination address NPi
+    * system-type - system type
+    * recconnect-timeout - recconnect timout to smpp server
+    * max-message - max multipart sms
+    * message-per-second - max message per seconds to smpp server
+    * enquire-link-interval - enquire link interval
+    * wait-resend-timeout - timout if got warning from smpp server
+    * is-fake-channel - fake or real channel (default false)
 
 
 channel_users sections:
 * user - user for http interface
-* * username - name user
-* * password - password user
-* * channel - association with the channel
+    * username - name user
+    * password - password user
+    * channel - association with the channel
 
 connection to rabbitmq:
 
-* rabbit_host - host RabbitMQ
-* rabbit_port - port RabbitMQ
-* rabbit_vhost - virtual host RabbitMQ
-* rabbit_queue - queue name RabbitMQ
-* rabbit_user - user connect to RabbitMQ
-* rabbit_password - password
+* rabbit-host - host RabbitMQ
+* rabbit-port - port RabbitMQ
+* rabbit-vhost - virtual host RabbitMQ
+* rabbit-queue - queue name RabbitMQ
+* rabbit-user - user connect to RabbitMQ
+* rabbit-password - password
 
 connection to redis
 
-* redis_max_pool - max connection to redis
-* redis_timeout - timout connection
-* redis_host - redis host
-* redis_port - redis port
-* redis_db - redis db
-* redis_password - redis password
+* redis-max-pool - max connection to redis
+* redis-timeout - timout connection
+* redis-host - redis host
+* redis-port - redis port
+* redis-db - redis db
+* redis-password - redis password
 
 http interface settings
 
@@ -205,20 +205,23 @@ logback config (please read official documentation logback.qos.ch):
 
 
 ## Example start script
-
+[[include:etc/smsserver.sh]]
+https://github.com/alfss/smsserver/blob/master/etc/smsserver.sh
 
 ## Example connect setup
-
+<center>
+<img src="https://raw.github.com/alfss/smsserver/master/use%20schema.png" alt="2">
+</center>
 
 ## Example send message HTTP
 ```
 curl http://localhost:8082/api/kannel/sendsms\?username\=alfss1\&to\=7*********\&password\=test\&text\=%04%1F%04%40%048%042%045%04B%00
 ```
 
-username - user name
-password - password
-to - destination address
-text - text UTF-16BE code to url encode
+* username - user name
+* password - password
+* to - destination address
+* text - text UTF-16BE code to url encode
 
 
 
