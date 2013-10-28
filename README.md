@@ -1,4 +1,4 @@
-## Smsserver
+## SMSServer
 
 implementation smpp transmitter server
 
