@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class WebServerRequestLog  extends AbstractNCSARequestLog implements RequestLog {
 
-    final Logger logger = (Logger) LoggerFactory.getLogger("net.alfss.smsserver.http.WebServerRequestLog");
+    final Logger logger = (Logger) LoggerFactory.getLogger(WebServerRequestLog.class);
 
     public WebServerRequestLog() {
     }

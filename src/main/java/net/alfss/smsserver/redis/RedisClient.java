@@ -21,7 +21,7 @@ import java.util.List;
  * Time: 13:13
  */
 public class RedisClient {
-    final Logger logger = (Logger) LoggerFactory.getLogger("net.alfss.smsserver.redis");
+    final Logger logger = (Logger) LoggerFactory.getLogger(RedisClient.class);
     private GlobalConfig globalConfig;
     private JedisPool redisPoolConnect = null;
 

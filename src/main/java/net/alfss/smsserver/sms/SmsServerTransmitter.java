@@ -8,6 +8,8 @@ import net.alfss.smsserver.redis.exceptions.RedisUnknownError;
 import net.alfss.smsserver.sms.exceptions.SmsServerConnectingError;
 import net.alfss.smsserver.sms.exceptions.SmsServerMessageError;
 import net.alfss.smsserver.sms.exceptions.SmsServerNeedWait;
+import net.alfss.smsserver.sms.logger.FailSend;
+import net.alfss.smsserver.sms.logger.SuccessSend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smpp.*;
@@ -34,16 +36,21 @@ public class SmsServerTransmitter extends Thread {
     private int seqNumber = 2;
     private byte uniqIdMessage = (byte) 0x00;
     private boolean isConnect = false;
-    final Logger logger = (Logger) LoggerFactory.getLogger("net.alfss.smsserver.rabbit.sms");
+    final Logger logger = (Logger) LoggerFactory.getLogger(SmsServerTransmitter.class);
     private final ChannelConfig config;
     private final RedisClient redisClient;
     private RateLimiter rateLimiter;
+    private SuccessSend successSendLogger;
+    private FailSend failSendLogger;
 
     public SmsServerTransmitter(ChannelConfig config, RedisClient redisClient) {
         this.config = config;
         this.redisClient = redisClient;
         rateLimiter = RateLimiter.create(config.getMessagePerScond());
         bindRequest = new BindTransmitter();
+
+        this.successSendLogger = new SuccessSend();
+        this.failSendLogger = new FailSend();
     }
 
     @Override
@@ -96,6 +103,7 @@ public class SmsServerTransmitter extends Thread {
             } catch (SmsServerMessageError e) {
                 logger.error("SmsServerTransmitter: error message (channel = " +
                         config.getChannel() + ") " + e.toString());
+                failSendLogger.writeLog(message.toString());
             } catch (JedisConnectionException e) {
                 logger.error("SmsServerTransmitter: error connect to redis (channel = " +
                         config.getChannel() + ") " + e.toString());
@@ -362,6 +370,8 @@ public class SmsServerTransmitter extends Thread {
         } catch (TerminatingZeroNotFoundException e) {
             throw new SmsServerMessageError(e.toString());
         }
+
+        successSendLogger.writeLog(message.toString());
 
         return  true;
     }

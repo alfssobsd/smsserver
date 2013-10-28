@@ -37,7 +37,7 @@ public class Main implements Daemon {
     private String [] arguments;
     private RedisClient redisClient = null;
     private GlobalConfig globalConfig = null;
-    final Logger logger = (Logger) LoggerFactory.getLogger("net/alfss/smsserver");
+    final Logger logger = (Logger) LoggerFactory.getLogger(Main.class);
 
     private String getVersion() {
         Properties properties = new Properties();

@@ -25,7 +25,7 @@ public class RabbitMQWatcher extends Thread {
     private GlobalConfig globalConfig;
     private RedisClient redisClient;
     private QueueingConsumer consumer;
-    final Logger logger = (Logger) LoggerFactory.getLogger("net.alfss.smsserver.rabbit");
+    final Logger logger = (Logger) LoggerFactory.getLogger(RabbitMQWatcher.class);
 
     public RabbitMQWatcher(GlobalConfig globalConfig, RedisClient redisClient) {
         this.globalConfig = globalConfig;

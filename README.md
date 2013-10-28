@@ -161,7 +161,7 @@ logback config (please read official documentation logback.qos.ch):
     <appender name="AnyLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/tmp/smsserver/app.log</file>
         <encoder>
-            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}]  [%thread] %-5level - %msg%n</pattern>
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %class [%thread] %-5level - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
@@ -186,6 +186,34 @@ logback config (please read official documentation logback.qos.ch):
         </rollingPolicy>
     </appender>
 
+    <appender name="SuccessSendSms" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/tmp/smsserver/success-send-sms.log</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>success-send-sms.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FailSendSms" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/tmp/smsserver/fail-send-sms.log</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>fail-send-sms.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
 
 
     <logger name="org.eclipse.jetty" level="ERROR"/>
@@ -194,11 +222,19 @@ logback config (please read official documentation logback.qos.ch):
 
     <logger name="org.springframework" level="ERROR"/>
 
+    <logger name="net.alfss.smsserver.sms.logger.SuccessSend" level="info" additivity="false">
+        <appender-ref ref="SuccessSendSms"/>
+    </logger>
+
+    <logger name="net.alfss.smsserver.sms.logger.FailSend" level="info" additivity="false">
+        <appender-ref ref="FailSendSms"/>
+    </logger>
+
     <logger name="net.alfss.smsserver.http.WebServerRequestLog" level="info" additivity="false">
         <appender-ref ref="WebRequestLog"/>
     </logger>
 
-    <root level="ERROR">
+    <root level="DEBUG">
         <appender-ref ref="AnyLogs" />
     </root>
 </configuration>

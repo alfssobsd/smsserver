@@ -17,7 +17,7 @@ import java.io.IOException;
 public class RabbitMQClient {
 
     private GlobalConfig globalConfig;
-    final Logger logger = (Logger) LoggerFactory.getLogger("net.alfss.smsserver.rabbit");
+    final Logger logger = (Logger) LoggerFactory.getLogger(RabbitMQWatcher.class);
 
     public RabbitMQClient(GlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
