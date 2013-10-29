@@ -32,7 +32,7 @@ public class SendSms {
                                           @RequestParam("to") String phone) {
 
         if(!userServices.checkUserPassword(userName, password)) {
-            return new ResponseEntity<String>("Invalid username or password", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Invalid username or password", HttpStatus.FORBIDDEN);
         }
 
         ChannelUser channelUser = userServices.getChannelUser(userName);
@@ -40,9 +40,9 @@ public class SendSms {
             channelMessageServices.pushMessageToChannel(phone,
                     new String(messageText.getBytes(), "UTF-16BE"),
                     channelUser.getChannel().getChannelName());
-            return new ResponseEntity<String>("OK", HttpStatus.OK);
+            return new ResponseEntity<>("OK", HttpStatus.OK);
         } catch (UnsupportedEncodingException e) {
-            return new ResponseEntity<String>(e.toString(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -58,15 +58,21 @@ public class SendSms {
         String password = header.get("X-AUTH-PASSWORD");
 
         if(!userServices.checkUserPassword(userName, password)) {
-            return new ResponseEntity<String>("{\"status\":\"ERROR\", \"message_error\":\"Invalid username or password\"}", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("{\"status\":\"ERROR\", \"message_error\":\"Invalid username or password\"}", HttpStatus.FORBIDDEN);
         }
 
         ChannelUser channelUser = userServices.getChannelUser(userName);
         if (channelMessageServices.pushJsonMessageToChannel(json, channelUser)) {
-            return new ResponseEntity<String>("{\"status\":\"OK\"}", HttpStatus.OK);
+            return new ResponseEntity<>("{\"status\":\"OK\"}", HttpStatus.OK);
         }
 
-        return new ResponseEntity<String>("{\"status\":\"ERROR\", \"message_error\":\"Error message format\"}", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("{\"status\":\"ERROR\", \"message_error\":\"Error message format\"}", HttpStatus.FORBIDDEN);
+    }
+
+    @RequestMapping(value = "/api/sendsms/post", method = {RequestMethod.POST})
+    public ResponseEntity<String> sendsmsPost() {
+
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
 
