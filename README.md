@@ -353,15 +353,25 @@ X-AUTH-PASSWORD:test
 Json Object
 
 ```
-{"phone":"79062783751","messagetext":"Hello text", "priority":"0", "channel":"smscru"}
+{"from": "mynumber", "to":"79062783751","messagetext":"Hello text", "priority":"0", "channel":"smscru", "expiretime":"300"}
 ```
+
+
+JSON message field
+
+* to - destination address
+* from - source address (optional)
+* messagetext - text message
+* priority - priority
+* channel - channel name
+* expiretime - lifetime in seconds (optional) 0 - disable expired
 
 
 ## Example send message RabbitMQ
 
 java:
 ```
-        String message = new String("{\"phone\":\"7*********\",\"messagetext\":\"Привет\", \"priority\":\"0\", \"channel\":\"smscru\"}")
+        String message = new String("{\"from\":\"mynumber\",\"to\":\"7*********\",\"messagetext\":\"Привет\", \"priority\":\"0\", \"channel\":\"smscru\", \"expiretime\":\"0\"}")
         ConnectionFactory factory =  new ConnectionFactory();
         factory.setHost(globalConfig.getRabbitHost());
         factory.setPort(globalConfig.getRabbitPort());
@@ -380,10 +390,12 @@ java:
 
 JSON message field
 
-* phone - destination address
+* to - destination address
+* from - source address (optional)
 * messagetext - text message
 * priority - priority
 * channel - channel name
+* expiretime - lifetime in seconds (optional) 0 - disable expired
 
 
 

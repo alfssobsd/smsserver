@@ -82,6 +82,9 @@ public class SmsServerTransmitter extends Thread {
                 logger.debug("SmsServerTransmitter: get message (channel = " + config.getChannel() + ")");
                 if (message != null) {
                     rateLimiter.acquire();
+                    if (message.isExpired()) {
+                        throw new SmsServerMessageError("message expire");
+                    }
                     sendMessage(message);
                 } else {
                     enquireLinkRequest();
@@ -103,7 +106,7 @@ public class SmsServerTransmitter extends Thread {
             } catch (SmsServerMessageError e) {
                 logger.error("SmsServerTransmitter: error message (channel = " +
                         config.getChannel() + ") " + e.toString());
-                failSendLogger.writeLog(message.toString());
+                failSendLogger.writeLog(message);
             } catch (JedisConnectionException e) {
                 logger.error("SmsServerTransmitter: error connect to redis (channel = " +
                         config.getChannel() + ") " + e.toString());
@@ -203,11 +206,11 @@ public class SmsServerTransmitter extends Thread {
             } catch (NullPointerException e1) {
                 logger.error("SmsServerTransmitter: connecting error -> error push to redis (channel = " +
                         config.getChannel() + ") message =  " +  message.toString() + " " + e1.toString());
-                failSendLogger.writeLog(message.toString());
+                failSendLogger.writeLog(message);
             } catch (RedisUnknownError e1) {
                 logger.error("SmsServerTransmitter: unknown error redis (channel = " +
                         config.getChannel() + ") message =  " + message.toString() + " " + e1.toString());
-                failSendLogger.writeLog(message.toString());
+                failSendLogger.writeLog(message);
             }
         }
     }
@@ -237,15 +240,19 @@ public class SmsServerTransmitter extends Thread {
         SubmitSM request = new SubmitSM();
         request.setDataCoding((byte) 0x08);
         try {
-            request.setSourceAddr(this.createAddress(null));
+            if (message.getSourceAddress() != null) {
+                request.setSourceAddr(message.getSourceAddress());
+            } else {
+                request.setSourceAddr(this.createAddress(null));
+            }
         } catch (WrongLengthOfStringException e) {
             throw new SmsServerConnectingError("source address " + config.getSoureceAddress() + "," + e.toString());
         }
 
         try {
-            request.setDestAddr(this.createAddress(message.getPhone()));
+            request.setDestAddr(this.createAddress(message.getDestinationAddress()));
         } catch (WrongLengthOfStringException e) {
-            throw new SmsServerMessageError("destination address " + message.getPhone() + "," + e.toString());
+            throw new SmsServerMessageError("destination address " + message.getDestinationAddress() + "," + e.toString());
         }
         request.setSequenceNumber(this.getNextSeqNumber());
         request.setEsmClass(esmClass);
@@ -330,7 +337,7 @@ public class SmsServerTransmitter extends Thread {
             throw new SmsServerMessageError(e.toString());
         }
 
-        successSendLogger.writeLog(message.toString());
+        successSendLogger.writeLog(message);
 
         return  true;
     }

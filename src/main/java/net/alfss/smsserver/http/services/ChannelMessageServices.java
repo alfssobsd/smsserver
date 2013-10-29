@@ -35,7 +35,7 @@ public class ChannelMessageServices {
 
     public void pushMessageToChannel(String phone, String messageText, String channelName) {
         Message message = new Message();
-        message.setPhone(phone);
+        message.setDestinationAddress(phone);
         message.setMessageText(messageText);
         message.setChannel(channelName);
         message.setPriority(1);

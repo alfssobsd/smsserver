@@ -19,7 +19,7 @@ ${channel.channelQueue}
         <tbody>
         <c:forEach var="messageChannel" items="${channelMessageList}">
             <tr>
-                <td><c:out value="${messageChannel.message.phone}" /></td>
+                <td><c:out value="${messageChannel.message.destinationAddress}" /></td>
                 <td><c:out value="${messageChannel.message.priority}" /></td>
                 <td><c:out value="${messageChannel.message.createTime}" /></td>
                 <td><c:out value="${messageChannel.message.messageText}" /></td>

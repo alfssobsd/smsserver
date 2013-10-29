@@ -18,28 +18,42 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
     private String channel;
-    private String phone;
+    private String sourceAddress;
+    private String destinationAddress;
     private String messageText;
     private Integer priority;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone="UTC")
     private Timestamp createTime;
     private Integer startPart;
     private Integer messageId;
+    private Integer expireTime;
 
     public Message() {
         Date now = new Date();
         this.createTime = new Timestamp(now.getTime());
         this.startPart = 0;
+        this.expireTime = 0;
     }
 
-    @JsonProperty("phone")
-    public String getPhone() {
-        return phone;
+
+    @JsonProperty("from")
+    public String getSourceAddress() {
+        return sourceAddress;
     }
 
-    @JsonProperty("phone")
-    public void setPhone(String phone) {
-        this.phone = phone;
+    @JsonProperty("from")
+    public void setSourceAddress(String sourceAddress) {
+        this.sourceAddress = sourceAddress;
+    }
+
+    @JsonProperty("to")
+    public String getDestinationAddress() {
+        return destinationAddress;
+    }
+
+    @JsonProperty("to")
+    public void setDestinationAddress(String destinationAddress) {
+        this.destinationAddress = destinationAddress;
     }
 
     @JsonProperty("messagetext")
@@ -103,6 +117,16 @@ public class Message {
         this.messageId = messageId;
     }
 
+    @JsonProperty("expiretime")
+    public Integer getExpireTime() {
+        return expireTime;
+    }
+
+    @JsonProperty("expiretime")
+    public void setExpireTime(Integer expireTime) {
+        this.expireTime = expireTime;
+    }
+
     @Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
@@ -113,4 +137,11 @@ public class Message {
         }
     }
 
+    public boolean isExpired()  {
+        if (!expireTime.equals(0)) {
+            Date now = new Date();
+            return now.getTime() > (createTime.getTime() + (long) (this.expireTime * 1000));
+        }
+        return false;
+    }
 }

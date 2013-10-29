@@ -1,5 +1,6 @@
 package net.alfss.smsserver.sms.logger;
 
+import net.alfss.smsserver.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ public class FailSend {
     final Logger logger = (Logger) LoggerFactory.getLogger(FailSend.class);
 
 
-    public void writeLog(String string) {
-        logger.info(string);
+    public void writeLog(Message message) {
+        logger.info(message.toString());
     }
 }
