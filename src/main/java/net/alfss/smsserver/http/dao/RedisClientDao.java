@@ -35,7 +35,7 @@ public class RedisClientDao {
         try {
             return redisClient.getElementsFromList(channelNameQueue, start, stop);
         } catch (RedisUnknownError redisUnknownError) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 

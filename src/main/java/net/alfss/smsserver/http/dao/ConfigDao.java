@@ -23,7 +23,7 @@ public class ConfigDao {
     }
 
     public List<String> getAllChannelName() {
-        ArrayList<String> listChannelName = new ArrayList<String>();
+        ArrayList<String> listChannelName = new ArrayList<>();
         for (String channelName: globalConfig.getChannelList()) {
             listChannelName.add(channelName);
         }
@@ -35,7 +35,7 @@ public class ConfigDao {
     }
 
     public List<String> getAllUserName() {
-        ArrayList<String> userNameList = new ArrayList<String>();
+        ArrayList<String> userNameList = new ArrayList<>();
         for (String userName: globalConfig.getUserList()) {
             userNameList.add(userName);
         }

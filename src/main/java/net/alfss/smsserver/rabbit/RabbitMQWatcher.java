@@ -103,17 +103,13 @@ public class RabbitMQWatcher extends Thread {
                     try {
                         redisClient.pushMessageToList(mapper.readValue(message, Message.class));
                         needPushMessage = false;
-                    } catch (JedisConnectionException e) {
+                    } catch (JedisConnectionException | RedisUnknownError e) {
                         logger.error("RabbitMQWatcher: error connect to redis " + e.toString());
                         sleep(redisClient.getConnectTimeOutInMs());
                         needPushMessage = true;
                     } catch (NullPointerException e) {
                         needPushMessage = false;
                         logger.error("RabbitMQWatcher: error push redis message = " + message + ", " + e.toString());
-                    } catch (RedisUnknownError e) {
-                        logger.error("RabbitMQWatcher: unknown error redis " + e.toString());
-                        sleep(redisClient.getConnectTimeOutInMs());
-                        needPushMessage = true;
                     }
                 } while (needPushMessage);
             } catch (InterruptedException e) {

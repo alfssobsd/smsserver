@@ -158,17 +158,8 @@ public class SmsServerTransmitter extends Thread {
                             config.getHost() + " (channel =  " + config.getChannel() + ")");
                     isConnect = true;
                 }
-            } catch (TimeoutException e) {
-                logger.error("SmsServerTransmitter: connect timeout (channel = " +
-                        config.getChannel() + ") " + e.toString());
-            } catch (PDUException e) {
-                logger.error("SmsServerTransmitter: connect pdu error timeout (channel = " +
-                        config.getChannel() + ") " + e.toString());
-            } catch (IOException e) {
-                logger.error("SmsServerTransmitter: connect i/o error timeout (channel = " +
-                        config.getChannel() + ") " + e.toString());
-            } catch (WrongSessionStateException e) {
-                logger.error("SmsServerTransmitter: connect wrong session state (channel = " +
+            } catch (TimeoutException | PDUException | IOException | WrongSessionStateException e) {
+                logger.error("SmsServerTransmitter: connect (channel = " +
                         config.getChannel() + ") " + e.toString());
             }
 
@@ -184,17 +175,8 @@ public class SmsServerTransmitter extends Thread {
                 isConnect = false;
                 session.unbind();
             }
-        } catch (TimeoutException e) {
-            logger.error("SmsServerTransmitter: disconnect timeout (channel = " +
-                    config.getChannel() + ") " + e.toString());
-        } catch (PDUException e) {
-            logger.error("SmsServerTransmitter: disconnect pdu error timeout (channel = " +
-                    config.getChannel() + ") " + e.toString());
-        } catch (IOException e) {
-            logger.error("SmsServerTransmitter: disconnect i/o error timeout (channel = " +
-                    config.getChannel() + ") " + e.toString());
-        } catch (WrongSessionStateException e) {
-            logger.error("SmsServerTransmitter: disconnect wrong session state (channel = " +
+        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException e) {
+            logger.error("SmsServerTransmitter: disconnect (channel = " +
                     config.getChannel() + ") " + e.toString());
         }
     }
@@ -208,10 +190,7 @@ public class SmsServerTransmitter extends Thread {
                     config.getReconnectTimeOut() + " seconds (channel =  " + config.getChannel() + ")");
             sleep(1000 * config.getReconnectTimeOut());
             connect();
-        } catch (InterruptedException e) {
-            logger.error("SmsServerTransmitter: recconect error (channel = " +
-                    config.getChannel() + ") " + e.toString());
-        } catch (SmsServerConnectingError e) {
+        } catch (InterruptedException | SmsServerConnectingError e) {
             logger.error("SmsServerTransmitter: recconect error (channel = " +
                     config.getChannel() + ") " + e.toString());
         }
@@ -224,9 +203,11 @@ public class SmsServerTransmitter extends Thread {
             } catch (NullPointerException e1) {
                 logger.error("SmsServerTransmitter: connecting error -> error push to redis (channel = " +
                         config.getChannel() + ") message =  " +  message.toString() + " " + e1.toString());
+                failSendLogger.writeLog(message.toString());
             } catch (RedisUnknownError e1) {
                 logger.error("SmsServerTransmitter: unknown error redis (channel = " +
                         config.getChannel() + ") message =  " + message.toString() + " " + e1.toString());
+                failSendLogger.writeLog(message.toString());
             }
         }
     }
@@ -243,20 +224,8 @@ public class SmsServerTransmitter extends Thread {
             }
             logger.debug("SmsServerTransmitter: enquireLinkRequest success (channel =  " +
                     config.getChannel() + ") status = " + response.getCommandStatus());
-        } catch (TimeoutException e) {
-            logger.error("SmsServerTransmitter: enquireLinkRequest timeout (channel =  " +
-                    config.getChannel() + ") " + e.toString());
-            throw new SmsServerConnectingError("Error enquireLink");
-        } catch (PDUException e) {
-            logger.error("SmsServerTransmitter: enquireLinkRequest pdu error (channel =  " +
-                    config.getChannel() + ") " + e.toString());
-            throw new SmsServerConnectingError("Error enquireLink");
-        } catch (IOException e) {
-            logger.error("SmsServerTransmitter: enquireLinkRequest i/o error (channel =  " +
-                    config.getChannel() + ") " + e.toString());
-            throw new SmsServerConnectingError("Error enquireLink");
-        } catch (WrongSessionStateException e) {
-            logger.error("SmsServerTransmitter: enquireLinkRequest wrong session state (channel =  " +
+        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException e) {
+            logger.error("SmsServerTransmitter: enquireLinkRequest (channel =  " +
                     config.getChannel() + ") " + e.toString());
             throw new SmsServerConnectingError("Error enquireLink");
         }
@@ -319,9 +288,7 @@ public class SmsServerTransmitter extends Thread {
         ByteBuffer[] preparedMessage;
         try {
             preparedMessage = prepareMessage(message, config.getEnablePlayLoad());
-        } catch (UnsupportedEncodingException e) {
-            throw new SmsServerMessageError("prepareMessage " + e.toString());
-        } catch (NullPointerException e) {
+        } catch (UnsupportedEncodingException | NullPointerException e) {
             throw new SmsServerMessageError("prepareMessage " + e.toString());
         }
 
@@ -357,17 +324,9 @@ public class SmsServerTransmitter extends Thread {
                 }
 
             }
-        } catch (TimeoutException e) {
-            throw new SmsServerConnectingError("timeout " + e.toString());
-        } catch (PDUException e) {
-            throw new SmsServerConnectingError("pdu error" + e.toString());
-        } catch (IOException e) {
-            throw new SmsServerConnectingError("i/o error" + e.toString());
-        } catch (WrongSessionStateException e) {
-            throw new SmsServerConnectingError("wrong session" + e.toString());
-        } catch (NotEnoughDataInByteBufferException e) {
-            throw new SmsServerMessageError(e.toString());
-        } catch (TerminatingZeroNotFoundException e) {
+        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException e) {
+            throw new SmsServerConnectingError(e.toString());
+        } catch (NotEnoughDataInByteBufferException | TerminatingZeroNotFoundException e) {
             throw new SmsServerMessageError(e.toString());
         }
 
@@ -404,7 +363,7 @@ public class SmsServerTransmitter extends Thread {
     }
 
     private ByteBuffer[] prepareMessage(Message message, boolean enablePlayLoad) throws UnsupportedEncodingException {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         String str = message.getMessageText();
         if (message.getMessageId() == null) message.setMessageId((int) getNextUniqIdMessage());
         int maxMessages = config.getMaxMessage();

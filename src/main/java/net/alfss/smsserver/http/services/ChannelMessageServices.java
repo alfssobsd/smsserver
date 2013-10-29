@@ -61,7 +61,7 @@ public class ChannelMessageServices {
     }
 
     public List<ChannelMessage> getAllMessageFromChannel(Channel channel) {
-        List<ChannelMessage> messageList = new ArrayList<ChannelMessage>();
+        List<ChannelMessage> messageList = new ArrayList<>();
 
         for(String messageRaw: redisClientDao.getMessageListFromChannel(channel.getChannelQueue(), (long) 0,
                 redisClientDao.countMessageInChannel(channel.getChannelQueue()))) {
@@ -79,7 +79,7 @@ public class ChannelMessageServices {
 
 
     public  List<ChannelMessage> getMessageListFromChannel(Channel channel, long step) {
-        List<ChannelMessage> messageList = new ArrayList<ChannelMessage>();
+        List<ChannelMessage> messageList = new ArrayList<>();
 
         Long start = step * 200;
         Long stop = start + 200;

@@ -38,8 +38,8 @@ public class GlobalConfig {
 
 
     //server config
-    private Hashtable<String, ChannelConfig> channelConfigList = new Hashtable< String, ChannelConfig>();
-    private Hashtable<String, UserConfig> userConfigList = new Hashtable< String, UserConfig>();
+    private Hashtable<String, ChannelConfig> channelConfigList = new Hashtable<>();
+    private Hashtable<String, UserConfig> userConfigList = new Hashtable<>();
 
 
     public GlobalConfig(XMLConfiguration xml_config) {
@@ -180,7 +180,7 @@ public class GlobalConfig {
     }
 
     public List<String> getChannelList() {
-        ArrayList <String>channelList = new ArrayList<String>();
+        ArrayList <String>channelList = new ArrayList<>();
         for (String key:channelConfigList.keySet()) {
             channelList.add(key);
         }
@@ -192,7 +192,7 @@ public class GlobalConfig {
     }
 
     public List<String> getUserList() {
-        ArrayList <String>userList = new ArrayList<String>();
+        ArrayList <String>userList = new ArrayList<>();
         for (String key:userConfigList.keySet()) {
             userList.add(key);
         }

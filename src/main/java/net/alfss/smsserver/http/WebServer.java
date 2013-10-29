@@ -87,7 +87,7 @@ public class WebServer
             _ctx.setWar(PROJECT_RELATIVE_PATH_TO_WEBAPP);
         }
         
-        List<Handler> _handlers = new ArrayList<Handler>();
+        List<Handler> _handlers = new ArrayList<>();
         
         _handlers.add(_ctx);
         

@@ -31,7 +31,7 @@ public class UserServices {
     }
 
     public List<ChannelUser> getChannelUserList() {
-        ArrayList<ChannelUser> channelUserList = new ArrayList<ChannelUser>();
+        ArrayList<ChannelUser> channelUserList = new ArrayList<>();
         for(String userName:configDao.getAllUserName()) {
             channelUserList.add(getChannelUser(userName));
         }
