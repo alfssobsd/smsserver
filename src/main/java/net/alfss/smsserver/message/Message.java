@@ -138,7 +138,7 @@ public class Message {
     }
 
     public boolean isExpired()  {
-        if (!expireTime.equals(0)) {
+        if (!expireTime.equals(0) && expireTime > 0) {
             Date now = new Date();
             return now.getTime() > (createTime.getTime() + (long) (this.expireTime * 1000));
         }
