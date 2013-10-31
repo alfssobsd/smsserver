@@ -378,7 +378,9 @@ public class SmsServerTransmitter extends Thread {
 
         if (enablePlayLoad && str.length() < 70) {
             ByteBuffer[] arr = new ByteBuffer[1];
-            arr[0].appendString(str, "UTF-16BE");
+            ByteBuffer byteMessage = new ByteBuffer();
+            byteMessage.appendString(str, Data.ENC_UTF16_BE);
+            arr[0] = byteMessage;
 
             return arr;
         } else {
