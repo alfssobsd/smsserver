@@ -379,6 +379,7 @@ public class SmsServerTransmitter extends Thread {
         if (enablePlayLoad && str.length() < 70) {
             ByteBuffer[] arr = new ByteBuffer[1];
             arr[0].appendString(str, "UTF-16BE");
+
             return arr;
         } else {
             while (str.length() > 67) {
@@ -403,6 +404,15 @@ public class SmsServerTransmitter extends Thread {
             }
 
             ByteBuffer[] arr = new ByteBuffer[list.size()];
+
+            if (list.size() == 1) {
+                ByteBuffer byteMessage = new ByteBuffer();
+                byteMessage.appendString(list.get(0), Data.ENC_UTF16_BE);
+                arr[0] = byteMessage;
+
+                return arr;
+            }
+
             for (int i = 0; i < arr.length; i++) {
                 ByteBuffer byteMessage = new ByteBuffer();
                 byteMessage.appendByte((byte) 0x05);
@@ -414,6 +424,7 @@ public class SmsServerTransmitter extends Thread {
                 byteMessage.appendString(list.get(i), Data.ENC_UTF16_BE);
                 arr[i] = byteMessage;
             }
+
             return arr;
         }
     }
