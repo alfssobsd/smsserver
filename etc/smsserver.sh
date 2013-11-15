@@ -59,10 +59,28 @@ case "$1" in
         $JAVA -Dlogback.configurationFile=$LOGBACK $JVM_OPT -jar $DAEMONJAR -c $CONF -g
     ;;
 
-    *)
-	log_action_msg "Usage: /etc/init.d/smsserver {start|stop|restart|regen}"
-	exit 1
+    status)
+        if [ -f $PIDFILE ]; then
+            sms_pid=$(cat $PIDFILE)
+            is_running=$(ps -U $USER | grep $sms_pid)
+            if [ -n "$is_running" ]; then
+                echo "Smsserver is running"
+                exit 0
+            else
+                echo "Pid-file presents, but process seems to be dead"
+                exit 1
+            fi
+        else
+            echo "Smsserver is not running"
+            exit 3
+        fi
     ;;
+
+    *)
+	    log_action_msg "Usage: /etc/init.d/smsserver {start|stop|restart|regen}"
+	    exit 1
+    ;;
+
 esac
 
 exit 0
