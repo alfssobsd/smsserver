@@ -20,6 +20,7 @@ import org.smpp.util.NotEnoughDataInByteBufferException;
 import org.smpp.util.TerminatingZeroNotFoundException;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -390,7 +391,7 @@ public class SmsServerTransmitter extends Thread {
         int maxMessages = config.getMaxMessage();
         int countMessage = 0;
 
-        if (enablePlayLoad && str.length() < 70) {
+        if (enablePlayLoad || str.length() < 70) {
             ByteBuffer[] arr = new ByteBuffer[1];
             ByteBuffer byteMessage = new ByteBuffer();
             byteMessage.appendString(str, Data.ENC_UTF16_BE);
