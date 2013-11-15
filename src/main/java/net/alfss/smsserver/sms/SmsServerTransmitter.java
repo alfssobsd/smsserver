@@ -69,8 +69,11 @@ public class SmsServerTransmitter extends Thread {
                 try {
                     sleep(1000 * config.getReconnectTimeOut());
                 } catch (InterruptedException e1) {
-                    e1.printStackTrace();
+                    logger.error("SmsServerTransmitter: " + e1.toString());
                 }
+            } catch (Exception e) {
+                logger.error("SmsServerTransmitter: waitMessage connect unknown error !!!!! (channel = " +
+                        config.getChannel() + ") " + e.toString());
             }
         }
 
@@ -120,6 +123,9 @@ public class SmsServerTransmitter extends Thread {
                         config.getChannel() + ") " + e.toString());
             } catch (RedisUnknownError e) {
                 logger.error("SmsServerTransmitter: unknown error redis (channel = " +
+                        config.getChannel() + ") " + e.toString());
+            } catch (Exception e) {
+                logger.error("SmsServerTransmitter: waitMessage unknown error !!!!!(channel = " +
                         config.getChannel() + ") " + e.toString());
             }
         }
@@ -181,6 +187,9 @@ public class SmsServerTransmitter extends Thread {
         } catch (TimeoutException | PDUException | IOException | WrongSessionStateException e) {
             logger.error("SmsServerTransmitter: disconnect (channel = " +
                     config.getChannel() + ") " + e.toString());
+        } catch (Exception e) {
+            logger.error("SmsServerTransmitter: disconnect unknown error !!!!! (channel = " +
+                    config.getChannel() + ") " + e.toString());
         }
     }
 
@@ -195,6 +204,9 @@ public class SmsServerTransmitter extends Thread {
             connect();
         } catch (InterruptedException | SmsServerConnectingError e) {
             logger.error("SmsServerTransmitter: recconect error (channel = " +
+                    config.getChannel() + ") " + e.toString());
+        } catch (Exception e) {
+            logger.error("SmsServerTransmitter: recconect unknown error !!!!! (channel = " +
                     config.getChannel() + ") " + e.toString());
         }
     }
