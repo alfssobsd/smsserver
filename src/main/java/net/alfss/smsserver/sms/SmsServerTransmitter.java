@@ -227,7 +227,7 @@ public class SmsServerTransmitter extends Thread {
             }
             logger.debug("SmsServerTransmitter: enquireLinkRequest success (channel =  " +
                     config.getChannel() + ") status = " + response.getCommandStatus());
-        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException e) {
+        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException | NullPointerException e) {
             logger.error("SmsServerTransmitter: enquireLinkRequest (channel =  " +
                     config.getChannel() + ") " + e.toString());
             throw new SmsServerConnectingError("Error enquireLink");
@@ -263,8 +263,9 @@ public class SmsServerTransmitter extends Thread {
     private void runSubmitRequest(SubmitSM request) throws PDUException, TimeoutException,
             WrongSessionStateException, IOException, SmsServerConnectingError, SmsServerNeedWait {
         try {
-            Response response = session.submit(request);
-
+            SubmitSMResp response = session.submit(request);
+            //TODO:get message id
+            //response.getMessageId();
             switch (response.getCommandStatus()) {
                 case Data.ESME_ROK:
                     logger.debug("SmsServerTransmitter: sendMessage messageId = submission submitted  (channel =  " +
@@ -282,6 +283,7 @@ public class SmsServerTransmitter extends Thread {
         } catch (NullPointerException e) {
             throw new SmsServerConnectingError("WTF null pointer submit requrest " + e.toString());
         }
+
 
 
 
@@ -331,7 +333,7 @@ public class SmsServerTransmitter extends Thread {
                 }
 
             }
-        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException e) {
+        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException| NullPointerException e) {
             throw new SmsServerConnectingError(e.toString());
         } catch (NotEnoughDataInByteBufferException | TerminatingZeroNotFoundException e) {
             throw new SmsServerMessageError(e.toString());
