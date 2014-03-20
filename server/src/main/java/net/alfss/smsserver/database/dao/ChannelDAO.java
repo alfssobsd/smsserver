@@ -12,8 +12,5 @@ import java.util.List;
 public interface ChannelDAO {
     public Channel get(int channelId);
     public void create(Channel channel);
-    public void update(Channel channel);
-    public List getList(int limit, int offset);
-    public List getEnableList(int limit, int offset);
     public List getAllEnableList();
 }

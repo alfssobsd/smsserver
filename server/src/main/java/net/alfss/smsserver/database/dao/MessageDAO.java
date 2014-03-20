@@ -28,8 +28,5 @@ public interface MessageDAO {
     public void setStatusWaitResponse(int messageId);
     public void setStatusWaiteDelivery(Message message);
     public void setStatusWaiteDelivery(int messageId);
-    public List getList(String queue, int limit, int offset);
     public List getList(Channel channel, int limit, int offset);
-    public List getList(String queue, String status, int limit, int offset);
-    public List getList(Channel channel, String status, int limit, int offset);
 }

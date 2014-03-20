@@ -225,24 +225,6 @@ public class MessageDAOImpl implements MessageDAO {
     }
 
     @Override
-    public List getList(String queue, int limit, int offset) {
-        Session session = getSession();
-        try {
-            session.beginTransaction();
-            List list = session.createCriteria(Message.class)
-//                    .setFirstResult(offset)
-//                    .setMaxResults(limit)
-//                    .add(Restrictions.eq("queueName", queue))
-                    .list();
-            session.getTransaction().commit();
-            return list;
-        } catch (RuntimeException e ) {
-            session.getTransaction().rollback();
-            throw new DatabaseError(e);
-        }
-    }
-
-    @Override
     public List getList(Channel channel, int limit, int offset) {
         Session session = getSession();
         try {
@@ -259,30 +241,6 @@ public class MessageDAOImpl implements MessageDAO {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
         }
-    }
-
-    @Override
-    public List getList(String queue, String status, int limit, int offset) {
-        Session session = getSession();
-        try {
-            session.beginTransaction();
-            Criteria criteria = session.createCriteria(Message.class)
-                    .add(Restrictions.eq("queueName", queue))
-                    .add(Restrictions.eq("messageStatus", status))
-                    .setFirstResult(offset)
-                    .setMaxResults(limit);
-            List list =  criteria.list();
-            session.getTransaction().commit();
-            return list;
-        } catch (RuntimeException e ) {
-            session.getTransaction().rollback();
-            throw new DatabaseError(e);
-        }
-    }
-
-    @Override
-    public List getList(Channel channel, String status, int limit, int offset) {
-        return getList(channel.getQueueName(), status, limit, offset);
     }
 
     private Session getSession() {

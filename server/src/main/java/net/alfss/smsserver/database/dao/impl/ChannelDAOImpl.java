@@ -6,7 +6,6 @@ import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
@@ -39,56 +38,6 @@ public class ChannelDAOImpl implements ChannelDAO {
             session.beginTransaction();
             session.save(channel);
             session.getTransaction().commit();
-        } catch (RuntimeException e ) {
-            session.getTransaction().rollback();
-            throw new DatabaseError(e);
-        }
-    }
-
-    @Override
-    public void update(Channel channel) {
-        Session session = getSession();
-        try {
-            session.beginTransaction();
-            session.update(channel);
-            session.getTransaction().commit();
-        } catch (RuntimeException e ) {
-            session.getTransaction().rollback();
-            throw new DatabaseError(e);
-        }
-    }
-
-    @Override
-    public List getList(int limit, int offset) {
-        Session session = getSession();
-        try {
-            session.beginTransaction();
-            Criteria criteria = session.createCriteria(Channel.class)
-                    .setFirstResult(offset)
-                    .setMaxResults(limit);
-            List list =  criteria.list();
-            session.getTransaction().commit();
-            return list;
-        } catch (RuntimeException e ) {
-            session.getTransaction().rollback();
-            throw new DatabaseError(e);
-        }
-
-    }
-
-    @Override
-    public List getEnableList(int limit, int offset) {
-        Session session = getSession();
-        try {
-            session.beginTransaction();
-            Criteria criteria = session.createCriteria(Channel.class)
-                    .add(Restrictions.eq("enable", true))
-                    .setFirstResult(offset)
-                    .setMaxResults(limit)
-                    .addOrder(Order.desc("channelId"));
-            List list =  criteria.list();
-            session.getTransaction().commit();
-            return list;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
