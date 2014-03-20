@@ -1,9 +1,5 @@
 class Message < ActiveRecord::Base
-  #TODO: refernces
-  #  @ManyToOne
-  #public Channel channel;
+  belongs_to :channel
+  belongs_to :message_status
 
-  #@ManyToOne
-  #public Status status;
-  #
 end

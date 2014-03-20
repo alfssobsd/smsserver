@@ -11,10 +11,51 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140320103118) do
+ActiveRecord::Schema.define(version: 20140320121025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "channel_connections", force: true do |t|
+    t.string   "smpp_system_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "channel_id"
+  end
+
+  add_index "channel_connections", ["channel_id"], name: "index_channel_connections_on_channel_id", using: :btree
+
+  create_table "channels", force: true do |t|
+    t.string   "name"
+    t.string   "queue_name"
+    t.string   "smpp_host"
+    t.integer  "smpp_port"
+    t.string   "smpp_username"
+    t.string   "smpp_password"
+    t.string   "smpp_source_addr"
+    t.integer  "smpp_source_ton"
+    t.integer  "smpp_source_npi"
+    t.integer  "smpp_dest_ton"
+    t.integer  "smpp_dest_npi"
+    t.integer  "smpp_max_split_message"
+    t.integer  "smpp_max_message_per_second"
+    t.integer  "smpp_reconnect_timeout"
+    t.integer  "smpp_enquire_link_interval"
+    t.boolean  "is_payload",                  default: false
+    t.boolean  "is_fake",                     default: false
+    t.boolean  "is_enable",                   default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  add_index "channels", ["user_id"], name: "index_channels_on_user_id", using: :btree
+
+  create_table "message_statuses", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "messages", force: true do |t|
     t.string   "message_id"
@@ -30,6 +71,29 @@ ActiveRecord::Schema.define(version: 20140320103118) do
     t.integer  "send_retry"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "channel_id"
+    t.integer  "status_id"
   end
+
+  add_index "messages", ["channel_id"], name: "index_messages_on_channel_id", using: :btree
+  add_index "messages", ["status_id"], name: "index_messages_on_status_id", using: :btree
+
+  create_table "users", force: true do |t|
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end

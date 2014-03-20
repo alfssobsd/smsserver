@@ -184,7 +184,7 @@ DEPENDENCIES
   capistrano-rails (~> 1.1)
   capistrano-rvm
   coffee-rails (~> 4.0.0)
-  devise (~> 3.2.3)
+  devise (~> 3.2.4)
   haml (~> 4.0.5)
   haml-rails (~> 0.5.3)
   jbuilder (~> 1.2)

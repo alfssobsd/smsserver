@@ -47,7 +47,7 @@ group :production do
   gem 'unicorn', '~> 4.8.2'
 end
 
-gem 'devise', '~> 3.2.3'
+gem 'devise', '~> 3.2.4'
 gem "cancan", "~> 1.6.10"
 gem 'kaminari', '~> 0.15.1'
 gem 'resque', '~> 1.25.2'
