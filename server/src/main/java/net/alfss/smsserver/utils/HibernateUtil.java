@@ -33,7 +33,6 @@ public class HibernateUtil
     public static void setupConnection(GlobalConfig config){
         configuration = new Configuration();
         configuration.addAnnotatedClass(Message.class);
-        configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(MessageStatus.class);
         configuration.addAnnotatedClass(Channel.class);
         configuration.addAnnotatedClass(ChannelConnection.class);
