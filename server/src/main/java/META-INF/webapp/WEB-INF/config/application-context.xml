@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <context:annotation-config/>
+
+    <context:component-scan base-package="net.alfss.smsserver.http.dao" />
+    <context:component-scan base-package="net.alfss.smsserver.http.services" />
+    <context:component-scan base-package="net.alfss.smsserver.http.domain" />
+    <context:component-scan base-package="net.alfss.smsserver.http.web" />
+
+    <bean id="handlerMapping"
+          class="org.resthub.web.springmvc.router.RouterHandlerMapping">
+        <property name="routeFiles">
+            <list>
+                <value>/WEB-INF/config/routes.conf</value>
+                <!--
+                    Router will *append* routes declared in additional files
+                    <value>addroutes.conf</value>
+                -->
+            </list>
+        </property>
+
+        <!--
+            Uncomment the following configuration line
+            if you want routes to be dynamically reloaded when
+            route files are modified.
+            Can be a good idea in dev mode, not so much in production!
+        -->
+        <!-- <property name="autoReloadEnabled" value="true" /> -->
+    </bean>
+
+</beans>

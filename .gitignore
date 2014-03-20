@@ -2,6 +2,12 @@
 
 /lib/
 
-/.idea/
+/server/.idea/
+/server/target/
+/web-smsserver/.idea/
 
 /smsserver.iml
+
+/web-smsserver/.gitignore.swp
+
+/web-smsserver/web-smsserver.iml

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="3600 seconds">
+
+
+    <appender name="AnyLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/tmp/smsserver/app.log</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %class [%thread] %-5level - %msg %ex %n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>/tmp/smsserver/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="WebRequestLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/tmp/smsserver/web-request.log</file>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>/tmp/smsserver/web-request.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="HibernateLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/tmp/smsserver/hibernate.log</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %class [%thread] %-5level - %msg %ex %n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>/tmp/smsserver/hibernate.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="SuccessSendSms" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/tmp/smsserver/success-send-sms.log</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>/tmp/smsserver/success-send-sms.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FailSendSms" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/tmp/smsserver/fail-send-sms.log</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>/tmp/smsserver/fail-send-sms.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+
+    <logger name="org.eclipse.jetty" level="ERROR"/>
+    <logger name="org.eclipse.jetty.jndi" level="ERROR"/>
+    <logger name="org.eclipse.jetty.jndi.local" level="ERROR"/>
+
+    <logger name="org.springframework" level="ERROR"/>
+
+    <logger name="net.alfss.smsserver.sms.logger.SuccessSend" level="info" additivity="false">
+        <appender-ref ref="SuccessSendSms"/>
+    </logger>
+
+    <logger name="net.alfss.smsserver.sms.logger.FailSend" level="info" additivity="false">
+        <appender-ref ref="FailSendSms"/>
+    </logger>
+
+    <logger name="net.alfss.smsserver.http.WebServerRequestLog" level="info" additivity="false">
+        <appender-ref ref="WebRequestLog"/>
+    </logger>
+
+    <logger name="org.hibernate" level="debug" additivity="false">
+        <appender-ref ref="HibernateLog"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="AnyLogs" />
+    </root>
+</configuration>
