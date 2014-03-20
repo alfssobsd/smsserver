@@ -3,10 +3,10 @@ package net.alfss.smsserver.sms;
 import com.google.common.util.concurrent.RateLimiter;
 import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.database.dao.impl.MessageDAOImpl;
-import net.alfss.smsserver.database.dao.impl.StatusDAOImpl;
+import net.alfss.smsserver.database.dao.impl.MessageStatusDAOImpl;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.entity.Message;
-import net.alfss.smsserver.database.entity.Status;
+import net.alfss.smsserver.database.entity.MessageStatus;
 import net.alfss.smsserver.rabbit.data.InboundMessage;
 import net.alfss.smsserver.rabbit.exceptions.RabbitMqQueueConnectException;
 import net.alfss.smsserver.rabbit.exceptions.RabbitMqQueueMappingException;
@@ -31,7 +31,7 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
 
     private final QueueInbound inboundQueue;
     private final MessageDAOImpl messageDAO;
-    private final StatusDAOImpl statusDAO;
+    private final MessageStatusDAOImpl statusDAO;
     private final QueueSend sendQueue;
     private InboundMessage inboundMessage = null;
     private byte uniqIdMessage = (byte) 0x00;
@@ -45,11 +45,11 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
         super(config, channel, connectPool, rateLimiter, seqNumber);
 
         ArrayList<String> routingKey = new ArrayList<>();
-        routingKey.add(channel.getQueue());
-        this.inboundQueue = new QueueInbound(config, config.getRabbitQueueMessage(), channel.getQueue(), true, routingKey);
+        routingKey.add(channel.getQueueName());
+        this.inboundQueue = new QueueInbound(config, config.getRabbitQueueMessage(), channel.getQueueName(), true, routingKey);
         this.sendQueue = new QueueSend(config, channel.getName() + "-send", channel.getName() + "-send", false);
         this.messageDAO = new MessageDAOImpl();
-        this.statusDAO = new StatusDAOImpl();
+        this.statusDAO = new MessageStatusDAOImpl();
     }
 
 
@@ -110,16 +110,16 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
     }
 
     private void createMessage(ByteBuffer byteMessage, byte esmClass) throws IOException {
-        Status status = statusDAO.getByName("WAITING_SEND");
+        MessageStatus messageStatus = statusDAO.getByName("WAITING_SEND");
         Message message = new Message();
         message.setPayload(channel.isPayload());
-        message.setQueueName(channel.getQueue());
+        message.setQueueName(channel.getQueueName());
         message.setChannel(channel);
         message.setEsmClass(esmClass);
-        message.setFrom(inboundMessage.getFrom());
+//        message.setFrom(inboundMessage.getFrom());
         message.setTo(inboundMessage.getTo());
         message.setMessageData(byteMessage.getBuffer());
-        message.setStatus(status);
+        message.setMessageStatus(messageStatus);
         sendQueue.publish(String.valueOf(messageDAO.create(message)));
     }
 
@@ -134,7 +134,7 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
         ArrayList<String> list = new ArrayList<>();
         String str = message.getMessageText();
         if (message.getUniqueMessageNumber() == null) message.setUniqueMessageNumber((int) getNextUniqIdMessage());
-        int maxMessages = channel.getSmppMaxMessage();
+        int maxMessages = channel.getSmppMaxSplitMessage();
         int countMessage = 0;
 
         if (channel.isPayload() || str.length() < 70) {

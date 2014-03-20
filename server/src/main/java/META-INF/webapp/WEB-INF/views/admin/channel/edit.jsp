@@ -80,7 +80,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">SMPP Max Message</label>
             <div class="col-sm-5">
-                <input name="smppMaxMessage" class="form-control" id="channelSmppMaxMessage" placeholder="SMPP Max Message" value="${channel.smppMaxMessage}">
+                <input name="smppMaxSplitMessage" class="form-control" id="channelSmppMaxMessage" placeholder="SMPP Max Message" value="${channel.smppMaxSplitMessage}">
             </div>
         </div>
 

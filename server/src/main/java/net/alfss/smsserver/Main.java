@@ -1,7 +1,6 @@
 package net.alfss.smsserver;
 
 import net.alfss.smsserver.config.GlobalConfig;
-import net.alfss.smsserver.config.SharedConfig;
 import net.alfss.smsserver.database.dao.impl.ChannelDAOImpl;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.http.WebServer;
@@ -94,7 +93,7 @@ public class Main implements Daemon {
         try {
             XMLConfiguration xml_config = new XMLConfiguration(configFile);
             globalConfig = new GlobalConfig(xml_config);
-            SharedConfig.setGlobalConfig(globalConfig);
+//            SharedConfig.setGlobalConfig(globalConfig);
         } catch (ConfigurationException e) {
             logger.error(e.toString());
             exit(0);
@@ -159,7 +158,7 @@ public class Main implements Daemon {
 
 //            Channel channel = new Channel();
 //            channel.setName("smscru");
-//            channel.setQueue("smscru");
+//            channel.setQueueName("smscru");
 //            channel.setSmppHost("localhost");
 //            channel.setSmppPort(2775);
 //            channel.setPayload(false);
@@ -173,8 +172,8 @@ public class Main implements Daemon {
 //            channel.setSmppSystemType("MCON1\\,SINGLE");
 //            channel.setSmppReconnectTimeOut(10);
 //            channel.setSmppEnquireLinkInterval(20);
-//            channel.setSmppSendMessagePerSecond(20);
-//            channle.setSmppMaxMessage(12);
+//            channel.setSmppMaxMessagePerSecond(20);
+//            channle.setSmppMaxSplitMessage(12);
 //            channel.setFake(false);
 //            channel.setEnable(true);
 //            channelDAO.create(channel);
@@ -194,7 +193,7 @@ public class Main implements Daemon {
 //            String test = "test";
 //            message.setMessageData(test.getBytes());
 //            message.setTo("79062783751");
-//            message.setStatus("NEEDSEND");
+//            message.setMessageStatus("NEEDSEND");
 //            message.setSequenceNumber(1);
 //            session.save(message);
 //            User user =  (User) session.get(User.class, 2);
@@ -236,15 +235,15 @@ public class Main implements Daemon {
 //                }
 //            }
 
-            server = new WebServer(globalConfig);
-            try {
-                server.start();
-                server.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (Exception e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+//            server = new WebServer(globalConfig);
+//            try {
+//                server.start();
+//                server.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            } catch (Exception e) {
+//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            }
 
         }  catch (JedisDataException | JedisConnectionException e) {
             logger.error(e.toString());

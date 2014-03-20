@@ -3,7 +3,7 @@ package net.alfss.smsserver.database.dao.impl;
 import net.alfss.smsserver.database.dao.MessageDAO;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.entity.Message;
-import net.alfss.smsserver.database.entity.Status;
+import net.alfss.smsserver.database.entity.MessageStatus;
 import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.utils.HibernateUtil;
 import org.hibernate.Criteria;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class MessageDAOImpl implements MessageDAO {
 
-    private StatusDAOImpl statusDAO = new StatusDAOImpl();
+    private MessageStatusDAOImpl statusDAO = new MessageStatusDAOImpl();
 
     @Override
     public Message get(int messageId) {
@@ -53,7 +53,7 @@ public class MessageDAOImpl implements MessageDAO {
     @Override
     public void create(Message message, Channel channel) {
         message.setChannel(channel);
-        message.setQueueName(channel.getQueue());
+        message.setQueueName(channel.getQueueName());
         message.setPayload(channel.isPayload());
         create(message);
     }
@@ -73,7 +73,7 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public Message getWaitResponse(int sequenceNumber, Channel channel) {
-        Status status = statusDAO.getByName("WAITING_RESPONSE");
+        MessageStatus messageStatus = statusDAO.getByName("WAITING_RESPONSE");
         Session session = getSession();
         try {
             session.beginTransaction();
@@ -81,7 +81,7 @@ public class MessageDAOImpl implements MessageDAO {
                     .add(Restrictions.eq("sequenceNumber", sequenceNumber))
                     .createAlias("channel", "channel")
                     .add(Restrictions.eq("channel.id", channel.getChannelId()))
-                    .add(Restrictions.eq("status.id", status.getStatusId()))
+                    .add(Restrictions.eq("messageStatus.id", messageStatus.getStatusId()))
                     .addOrder(Order.desc("updateTime"))
                     .setFirstResult(0);
             Message message = (Message) queryCriteria.list().get(0);
@@ -95,14 +95,14 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public Message getWaiteDelivery(int messageSmsId, String queue) {
-        Status status = statusDAO.getByName("WAITING_DELIVERY");
+        MessageStatus messageStatus = statusDAO.getByName("WAITING_DELIVERY");
         Session session = getSession();
         try {
             session.beginTransaction();
             Criteria queryCriteria = session.createCriteria(Message.class)
                     .add(Restrictions.eq("messageSmsId", messageSmsId))
                     .add(Restrictions.eq("queueName", queue))
-                    .add(Restrictions.eq("status.id", status.getStatusId()))
+                    .add(Restrictions.eq("messageStatus.id", messageStatus.getStatusId()))
                     .setFirstResult(0);
             Message message = (Message) queryCriteria.list().get(0);
             session.getTransaction().commit();
@@ -115,16 +115,16 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public Message getWaiteDelivery(int messageSmsId, Channel channel) {
-        return getWaiteDelivery(messageSmsId, channel.getQueue());
+        return getWaiteDelivery(messageSmsId, channel.getQueueName());
     }
 
     @Override
     public void setStatusFail(Message message) {
-        Status status = statusDAO.getByName("FAIL");
+        MessageStatus messageStatus = statusDAO.getByName("FAIL");
         Session session = getSession();
         try {
             session.beginTransaction();
-            message.setStatus(status);
+            message.setMessageStatus(messageStatus);
             session.getTransaction().commit();
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
@@ -140,11 +140,11 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public void setStatusSuccess(Message message) {
-        Status status = statusDAO.getByName("SUCCESS");
+        MessageStatus messageStatus = statusDAO.getByName("SUCCESS");
         Session session = getSession();
         try {
             session.beginTransaction();
-            message.setStatus(status);
+            message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
         } catch (RuntimeException e ) {
@@ -161,11 +161,11 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public void setStatusWaitSend(Message message) {
-        Status status = statusDAO.getByName("WAITING_SEND");
+        MessageStatus messageStatus = statusDAO.getByName("WAITING_SEND");
         Session session = getSession();
         try {
             session.beginTransaction();
-            message.setStatus(status);
+            message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
         } catch (RuntimeException e ) {
@@ -182,11 +182,11 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public void setStatusWaitResponse(Message message) {
-        Status status = statusDAO.getByName("WAITING_RESPONSE");
+        MessageStatus messageStatus = statusDAO.getByName("WAITING_RESPONSE");
         Session session = getSession();
         try {
             session.beginTransaction();
-            message.setStatus(status);
+            message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
         } catch (RuntimeException e ) {
@@ -203,11 +203,11 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public void setStatusWaiteDelivery(Message message) {
-        Status status = statusDAO.getByName("WAITING_DELIVERY");
+        MessageStatus messageStatus = statusDAO.getByName("WAITING_DELIVERY");
         Session session = getSession();
         try {
             session.beginTransaction();
-            message.setStatus(status);
+            message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
         } catch (RuntimeException e ) {
@@ -268,7 +268,7 @@ public class MessageDAOImpl implements MessageDAO {
             session.beginTransaction();
             Criteria criteria = session.createCriteria(Message.class)
                     .add(Restrictions.eq("queueName", queue))
-                    .add(Restrictions.eq("status", status))
+                    .add(Restrictions.eq("messageStatus", status))
                     .setFirstResult(offset)
                     .setMaxResults(limit);
             List list =  criteria.list();
@@ -282,7 +282,7 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public List getList(Channel channel, String status, int limit, int offset) {
-        return getList(channel.getQueue(), status, limit, offset);
+        return getList(channel.getQueueName(), status, limit, offset);
     }
 
     private Session getSession() {

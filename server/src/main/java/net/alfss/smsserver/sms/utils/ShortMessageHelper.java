@@ -49,7 +49,7 @@ public class ShortMessageHelper {
         ArrayList<String> list = new ArrayList<>();
         String str = message.getMessageText();
         if (message.getUniqueMessageNumber() == null) message.setUniqueMessageNumber((int) getNextUniqIdMessage());
-        int maxMessages = channel.getSmppMaxMessage();
+        int maxMessages = channel.getSmppMaxSplitMessage();
         int countMessage = 0;
 
         if (enablePayLoad || str.length() < 70) {

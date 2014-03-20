@@ -15,8 +15,8 @@
     <c:out value="${channel.smppSourceNpi}"/> <br>
     <c:out value="${channel.smppDestTon}"/> <br>
     <c:out value="${channel.smppDestNpi}"/> <br>
-    <c:out value="${channel.smppMaxMessage}"/> <br>
-    <c:out value="${channel.smppSendMessagePerSecond}"/> <br>
+    <c:out value="${channel.smppMaxSplitMessage}"/> <br>
+    <c:out value="${channel.smppMaxMessagePerSecond}"/> <br>
     <c:out value="${channel.smppReconnectTimeOut}"/> <br>
     <c:out value="${channel.smppEnquireLinkInterval}"/> <br>
     <c:out value="${channel.payload}"/> <br>

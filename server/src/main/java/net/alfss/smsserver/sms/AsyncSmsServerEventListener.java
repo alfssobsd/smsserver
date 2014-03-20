@@ -87,12 +87,12 @@ public class AsyncSmsServerEventListener extends SmppObject implements ServerPDU
     private void handlerEnquireLinkResp(EnquireLinkResp response) {
         logger.debug("AsyncSmsServerEventListener: EnquireLinkResp channel = " + channel.getName() + " received " + response.debugString());
         if(response.getCommandStatus() != Data.ESME_ROK) {
-            logger.error("SmsServerTransmitter: enquireLinkRequest error status (channel =  " +
-                    channel.getName() + ") status = " + response.getCommandStatus());
+            logger.error("SmsServerTransmitter: enquireLinkRequest error messageStatus (channel =  " +
+                    channel.getName() + ") messageStatus = " + response.getCommandStatus());
 //            throw new SmsServerConnectionException("AsyncSmsServerEventListener: Error enquireLink");
         }
         logger.debug("SmsServerTransmitter: enquireLinkRequest success (channel =  " +
-                channel.getName() + ") status = " + response.getCommandStatus());
+                channel.getName() + ") messageStatus = " + response.getCommandStatus());
 
     }
 
@@ -108,16 +108,16 @@ public class AsyncSmsServerEventListener extends SmppObject implements ServerPDU
                 message.setMessageSmsId(response.getMessageId());
                 messageDAO.setStatusWaiteDelivery(message);
                 logger.debug("SmsServerTransmitter: sendMessage messageId = submission submitted  (channel =  " +
-                        channel.getName() + ") status = " + response.getCommandStatus());
+                        channel.getName() + ") messageStatus = " + response.getCommandStatus());
                 break;
             case Data.ESME_RMSGQFUL:
                 logger.error("SmsServerTransmitter: smpp server queue is full  (channel =  " +
-                        channel.getName() + ") status = " + response.getCommandStatus());
+                        channel.getName() + ") messageStatus = " + response.getCommandStatus());
                 messageDAO.setStatusFail(message);
 //                throw new SmsServerConnectionException("AsyncSmsServerEventListener: submit ESME_RMSGQFUL");
             default:
                 logger.error("SmsServerTransmitter: sendMessage submission failed  (channel =  " +
-                        channel.getName() + ") status = " + response.getCommandStatus());
+                        channel.getName() + ") messageStatus = " + response.getCommandStatus());
                 messageDAO.setStatusFail(message);
 //                throw new SmsServerConnectionException("AsyncSmsServerEventListener: submit ESME_RMSGQFUL");
         }

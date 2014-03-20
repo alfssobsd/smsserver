@@ -34,7 +34,7 @@ public class HibernateUtil
         configuration = new Configuration();
         configuration.addAnnotatedClass(Message.class);
         configuration.addAnnotatedClass(User.class);
-        configuration.addAnnotatedClass(Status.class);
+        configuration.addAnnotatedClass(MessageStatus.class);
         configuration.addAnnotatedClass(Channel.class);
         configuration.addAnnotatedClass(ChannelConnection.class);
         configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");

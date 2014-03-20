@@ -212,12 +212,12 @@ package net.alfss.smsserver.sms;
 //        try {
 //            EnquireLinkResp response = session.enquireLink(request);
 //            if(response.getCommandStatus() != Data.ESME_ROK) {
-//                logger.error("SmsServerTransmitter: enquireLinkRequest error status (channel =  " +
-//                        config.getChannel() + ") status = " + response.getCommandStatus());
+//                logger.error("SmsServerTransmitter: enquireLinkRequest error messageStatus (channel =  " +
+//                        config.getChannel() + ") messageStatus = " + response.getCommandStatus());
 //                throw new SmsServerConnectingErrorException("Error enquireLink");
 //            }
 //            logger.debug("SmsServerTransmitter: enquireLinkRequest success (channel =  " +
-//                    config.getChannel() + ") status = " + response.getCommandStatus());
+//                    config.getChannel() + ") messageStatus = " + response.getCommandStatus());
 //        } catch (TimeoutException | PDUException | IOException | WrongSessionStateException | NullPointerException e) {
 //            logger.error("SmsServerTransmitter: enquireLinkRequest (channel =  " +
 //                    config.getChannel() + ") " + e.toString());
@@ -261,15 +261,15 @@ package net.alfss.smsserver.sms;
 //            switch (response.getCommandStatus()) {
 //                case Data.ESME_ROK:
 //                    logger.debug("SmsServerTransmitter: sendMessage messageId = submission submitted  (channel =  " +
-//                            config.getChannel() + ") status = " + response.getCommandStatus());
+//                            config.getChannel() + ") messageStatus = " + response.getCommandStatus());
 //                    break;
 //                case Data.ESME_RMSGQFUL:
 //                    logger.error("SmsServerTransmitter: smpp server queue is full  (channel =  " +
-//                            config.getChannel() + ") status = " + response.getCommandStatus());
+//                            config.getChannel() + ") messageStatus = " + response.getCommandStatus());
 //                    throw new SmsServerNeedWait("submit ESME_RMSGQFUL");
 //                default:
 //                    logger.error("SmsServerTransmitter: sendMessage submission failed  (channel =  " +
-//                            config.getChannel() + ") status = " + response.getCommandStatus());
+//                            config.getChannel() + ") messageStatus = " + response.getCommandStatus());
 //                    throw new SmsServerConnectingErrorException("submit unknown error");
 //            }
 //        } catch (NullPointerException e) {

@@ -25,7 +25,7 @@
             <th>createTime</th>
             <th>updateTime</th>
             <th>messageData</th>
-            <th>status</th>
+            <th>messageStatus</th>
         </tr>
         </thead>
         <tbody>
@@ -39,14 +39,14 @@
                 <td><c:out value="${message.getMessageDataString()}" /></td>
                 <td>
                     <c:choose>
-                        <c:when test="${message.status.name == 'SUCCESS'}">
-                            <span class="label label-success"><c:out value="${message.status.name}"/></span>
+                        <c:when test="${message.messageStatus.name == 'SUCCESS'}">
+                            <span class="label label-success"><c:out value="${message.messageStatus.name}"/></span>
                         </c:when>
-                        <c:when test="${message.status.name == 'FAIL'}">
-                            <span class="label label-danger"><c:out value="${message.status.name}"/></span>
+                        <c:when test="${message.messageStatus.name == 'FAIL'}">
+                            <span class="label label-danger"><c:out value="${message.messageStatus.name}"/></span>
                         </c:when>
                         <c:otherwise>
-                            <span class="label label-info"> <c:out value="${message.status.name}"/></span>
+                            <span class="label label-info"> <c:out value="${message.messageStatus.name}"/></span>
                         </c:otherwise>
                     </c:choose>
                 </td>

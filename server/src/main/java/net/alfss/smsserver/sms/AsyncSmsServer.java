@@ -31,7 +31,7 @@ public class AsyncSmsServer extends Thread {
     public AsyncSmsServer(GlobalConfig config, Channel channel) {
         this.config = config;
         this.channel = channel;
-        this.rateLimiter = RateLimiter.create(channel.getSmppSendMessagePerSecond());
+        this.rateLimiter = RateLimiter.create(channel.getSmppMaxMessagePerSecond());
         setThreadName();
 
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();

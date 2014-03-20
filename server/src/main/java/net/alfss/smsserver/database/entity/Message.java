@@ -18,16 +18,16 @@ public class Message {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "message_entity_seq_gen")
-    @SequenceGenerator(name = "message_entity_seq_gen", sequenceName = "message_seq")
+    @SequenceGenerator(name = "message_entity_seq_gen", sequenceName = "messages_id_seq")
     private int messageId;
 
     @Column(name = "message_id")
     private String messageSmsId;
 
-    @Column(name = "send_from")
+    @Column(name = "addr_from")
     private String from;
 
-    @Column(name = "send_to", nullable = false)
+    @Column(name = "addr_to", nullable = false)
     private String to;
 
     @Column(name = "is_payload")
@@ -60,7 +60,8 @@ public class Message {
     public Channel channel;
 
     @ManyToOne
-    public Status status;
+    @JoinColumn(name="message_status_id")
+    public MessageStatus messageStatus;
 
 
     public String getMessageSmsId() {
@@ -144,12 +145,12 @@ public class Message {
         this.channel = channel;
     }
 
-    public Status getStatus() {
-        return status;
+    public MessageStatus getMessageStatus() {
+        return messageStatus;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setMessageStatus(MessageStatus messageStatus) {
+        this.messageStatus = messageStatus;
     }
 
     public Timestamp getCreateTime() {

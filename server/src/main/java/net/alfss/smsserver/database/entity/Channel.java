@@ -1,7 +1,6 @@
 package net.alfss.smsserver.database.entity;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,14 +15,14 @@ public class Channel {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "channel_entity_seq_gen")
-    @SequenceGenerator(name = "channel_entity_seq_gen", sequenceName = "channel_seq")
+    @SequenceGenerator(name = "channel_entity_seq_gen", sequenceName = "channels_id_seq")
     private int channelId;
 
     @Column(name="name", unique = true, nullable = false)
     private String name;
 
-    @Column(name="queue", nullable = false)
-    private String queue;
+    @Column(name="queue_name", nullable = false)
+    private String queueName;
 
     @Column(name="smpp_host", nullable = false)
     private String smppHost;
@@ -52,11 +51,11 @@ public class Channel {
     @Column(name="smpp_dest_npi", nullable = false)
     private int smppDestNpi;
 
-    @Column(name="smpp_max_message")
-    private int smppMaxMessage;
+    @Column(name="smpp_max_split_message")
+    private int smppMaxSplitMessage;
 
-    @Column(name="smpp_send_message_per_second", nullable = false)
-    private int smppSendMessagePerSecond;
+    @Column(name="smpp_max_message_per_second", nullable = false)
+    private int smppMaxMessagePerSecond;
 
     @Column(name="smpp_reconnect_timeout")
     private int smppReconnectTimeOut;
@@ -73,9 +72,6 @@ public class Channel {
     @Column(name="is_enable")
     private Boolean enable = true;
 
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,  mappedBy = "channels")
-    private Set<User> users;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "channel", cascade = CascadeType.ALL)
     public List<Message> messages;
@@ -99,12 +95,12 @@ public class Channel {
         this.name = name;
     }
 
-    public String getQueue() {
-        return queue;
+    public String getQueueName() {
+        return queueName;
     }
 
-    public void setQueue(String queue) {
-        this.queue = queue;
+    public void setQueueName(String queueName) {
+        this.queueName = queueName;
     }
 
     public String getSmppHost() {
@@ -179,12 +175,12 @@ public class Channel {
         this.smppDestNpi = smppDestNpi;
     }
 
-    public int getSmppSendMessagePerSecond() {
-        return smppSendMessagePerSecond;
+    public int getSmppMaxMessagePerSecond() {
+        return smppMaxMessagePerSecond;
     }
 
-    public void setSmppSendMessagePerSecond(int smppSendMessagePerSecond) {
-        this.smppSendMessagePerSecond = smppSendMessagePerSecond;
+    public void setSmppMaxMessagePerSecond(int smppMaxMessagePerSecond) {
+        this.smppMaxMessagePerSecond = smppMaxMessagePerSecond;
     }
 
     public int getSmppReconnectTimeOut() {
@@ -219,23 +215,6 @@ public class Channel {
         this.enable = enable;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public void addUser(User user) {
-        if (users == null) users = new HashSet<>();
-        users.add(user);
-    }
-
-    public void removeUser(User user) {
-        if (users !=null) users.remove(user);
-    }
-
     public List<Message> getMessages() {
         return messages;
     }
@@ -252,12 +231,12 @@ public class Channel {
         this.payload = payload;
     }
 
-    public int getSmppMaxMessage() {
-        return smppMaxMessage;
+    public int getSmppMaxSplitMessage() {
+        return smppMaxSplitMessage;
     }
 
-    public void setSmppMaxMessage(int smppMaxMessage) {
-        this.smppMaxMessage = smppMaxMessage;
+    public void setSmppMaxSplitMessage(int smppMaxSplitMessage) {
+        this.smppMaxSplitMessage = smppMaxSplitMessage;
     }
 
     public Set<ChannelConnection> getChannelConnections() {
