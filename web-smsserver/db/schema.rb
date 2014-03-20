@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140320143605) do
+ActiveRecord::Schema.define(version: 20140320152606) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,8 +64,8 @@ ActiveRecord::Schema.define(version: 20140320143605) do
 
   create_table "messages", force: true do |t|
     t.string   "message_id"
-    t.string   "from"
-    t.string   "to"
+    t.string   "addr_from"
+    t.string   "addr_to"
     t.boolean  "is_payload",        default: false
     t.integer  "sequence_number"
     t.integer  "esm_class"
