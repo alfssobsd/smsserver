@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140320121025) do
+ActiveRecord::Schema.define(version: 20140320143605) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,10 +46,15 @@ ActiveRecord::Schema.define(version: 20140320121025) do
     t.boolean  "is_enable",                   default: true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id"
   end
 
-  add_index "channels", ["user_id"], name: "index_channels_on_user_id", using: :btree
+  create_table "channels_users", id: false, force: true do |t|
+    t.integer "channel_id"
+    t.integer "user_id"
+  end
+
+  add_index "channels_users", ["channel_id", "user_id"], name: "index_channels_users_on_channel_id_and_user_id", using: :btree
+  add_index "channels_users", ["user_id"], name: "index_channels_users_on_user_id", using: :btree
 
   create_table "message_statuses", force: true do |t|
     t.string   "name"
@@ -61,7 +66,7 @@ ActiveRecord::Schema.define(version: 20140320121025) do
     t.string   "message_id"
     t.string   "from"
     t.string   "to"
-    t.boolean  "is_payload",      default: false
+    t.boolean  "is_payload",        default: false
     t.integer  "sequence_number"
     t.integer  "esm_class"
     t.binary   "message_data"
@@ -72,11 +77,11 @@ ActiveRecord::Schema.define(version: 20140320121025) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "channel_id"
-    t.integer  "status_id"
+    t.integer  "message_status_id"
   end
 
   add_index "messages", ["channel_id"], name: "index_messages_on_channel_id", using: :btree
-  add_index "messages", ["status_id"], name: "index_messages_on_status_id", using: :btree
+  add_index "messages", ["message_status_id"], name: "index_messages_on_message_status_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

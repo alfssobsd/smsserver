@@ -9,18 +9,18 @@ import java.util.List;
  * Time: 14:31
  */
 @Entity
-@Table(name="status")
-public class Status {
+@Table(name="message_statuses")
+public class MessageStatus {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "status_entity_seq_gen")
-    @SequenceGenerator(name = "status_entity_seq_gen", sequenceName = "status_seq")
+    @SequenceGenerator(name = "status_entity_seq_gen", sequenceName = "message_statuses_id_seq")
     private int statusId;
 
     @Column(name="name", unique = true, nullable = false)
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "status", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "messageStatus", cascade = CascadeType.ALL)
     public List<Message> messages;
 
     public int getStatusId() {

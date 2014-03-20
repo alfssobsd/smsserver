@@ -1,7 +1,7 @@
 package net.alfss.smsserver.database.dao.impl;
 
-import net.alfss.smsserver.database.dao.StatusDAO;
-import net.alfss.smsserver.database.entity.Status;
+import net.alfss.smsserver.database.dao.MessageStatusDAO;
+import net.alfss.smsserver.database.entity.MessageStatus;
 import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.utils.HibernateUtil;
 import org.hibernate.Criteria;
@@ -13,15 +13,15 @@ import org.hibernate.criterion.Restrictions;
  * Date: 19.03.14
  * Time: 16:43
  */
-public class StatusDAOImpl  implements StatusDAO {
+public class MessageStatusDAOImpl implements MessageStatusDAO {
     @Override
-    public Status get(int statusId) {
+    public MessageStatus get(int statusId) {
         Session session = getSession();
         try {
             session.beginTransaction();
-            Status status = (Status) session.get(Status.class, statusId);
+            MessageStatus messageStatus = (MessageStatus) session.get(MessageStatus.class, statusId);
             session.getTransaction().commit();
-            return status;
+            return messageStatus;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -29,16 +29,16 @@ public class StatusDAOImpl  implements StatusDAO {
     }
 
     @Override
-    public Status getByName(String name) {
+    public MessageStatus getByName(String name) {
         Session session = getSession();
         try {
             session.beginTransaction();
-            Criteria queryCriteria = session.createCriteria(Status.class)
+            Criteria queryCriteria = session.createCriteria(MessageStatus.class)
                     .add(Restrictions.eq("name", name))
                     .setFirstResult(0);
-            Status status =  (Status) queryCriteria.list().get(0);
+            MessageStatus messageStatus =  (MessageStatus) queryCriteria.list().get(0);
             session.getTransaction().commit();
-            return status;
+            return messageStatus;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
