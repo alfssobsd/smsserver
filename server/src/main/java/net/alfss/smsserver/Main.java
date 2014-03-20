@@ -1,6 +1,5 @@
 package net.alfss.smsserver;
 
-import com.googlecode.flyway.core.Flyway;
 import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.config.SharedConfig;
 import net.alfss.smsserver.database.dao.impl.ChannelDAOImpl;
@@ -113,9 +112,9 @@ public class Main implements Daemon {
         logger.error(MessageFormat.format("############# Start smsserver {0} #############", getVersion()));
         try {
 
-            Flyway flyway = new Flyway();
-            flyway.setDataSource(globalConfig.getDbUrl(), globalConfig.getDbUserName(), globalConfig.getDbPassword());
-            flyway.migrate();
+//            Flyway flyway = new Flyway();
+//            flyway.setDataSource(globalConfig.getDbUrl(), globalConfig.getDbUserName(), globalConfig.getDbPassword());
+//            flyway.migrate();
 //            MessageDAOImpl messageDAO = new MessageDAOImpl();
 //////            messageDAO.get(1);
 ////
