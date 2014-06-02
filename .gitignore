@@ -11,3 +11,7 @@
 /web-smsserver/.gitignore.swp
 
 /web-smsserver/web-smsserver.iml
+
+/server/smsserver.iml
+
+smsserver.iml
