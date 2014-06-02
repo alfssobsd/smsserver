@@ -4,7 +4,20 @@ WebSmsserver::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  root to: redirect('/channels')
+
+  get 'channels' => 'channel#index', as: :channels
+  get "channels/:channel_id/messages", to: redirect('channels/%{channel_id}/messages/list/1'), as: :channels_messages_index
+  get "channels/:channel_id/messages/list/(:page)" => 'message#index', as: :channels_messages_page
+  get "channels/:channel_id/messages/:id/show" => 'message#show', as: :channels_messages_show
+  get "channels/:channel_id/messages/new" => 'message#new', as: :channels_messages_new
+  post "channels/:channel_id/messages/create" => 'message#create', as: :channels_messages_create
+
+
+  # namespace :channels do
+  #   get ":channel_id/messages" => 'message#index', as: :messages_index
+  #   get ":channel_id/messages/:id/show" => 'message#show', as: :messages_show
+  # end
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

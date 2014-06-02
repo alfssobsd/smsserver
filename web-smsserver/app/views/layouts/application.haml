@@ -1,0 +1,29 @@
+!!! 5
+%html
+  %head
+    = stylesheet_link_tag "application", media: :all
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body
+    .navbar.navbar-default.navbar-static-top{rolse:"navigation"}
+      .container
+        .navbar-header
+          %button.navbar-toggle{"data-toggle"=>"collapse", "data-target" => ".navbar-collapse"}
+            %span.sr-only
+              Toggle navigation
+            %span.icon-bar
+            %span.icon-bar
+            %span.icon-bar
+          = link_to "SmsServer", root_path, class: "navbar-brand"
+        .navbar-collapse.collapse
+          %ul.nav.navbar-nav
+            %li.active
+              = link_to "Channels", channels_path
+
+          %ul.nav.navbar-nav.navbar-right
+            %li.active
+              = link_to "Login", "#"
+
+    .container
+      .content
+        = yield

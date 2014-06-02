@@ -1,0 +1,17 @@
+= render 'breadcrumb', is_new: true
+
+
+.row
+  .col-lg-6
+    = form_tag(url:channels_messages_create_path, method: "get") do
+      .form-group
+        = label_tag :to, "To :"
+        = text_field_tag :to, '', class: "form-control"
+      .form-group
+        = label_tag :from, "From :"
+        = text_field_tag :from, @channel.smpp_source_addr, class: "form-control"
+      .form-group
+        = label_tag :text, "Text :"
+        = text_area_tag :message_text, 'test message', class: "form-control"
+
+      = submit_tag "Send", class:"btn btn-primary"

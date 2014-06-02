@@ -1,0 +1,58 @@
+%ol.breadcrumb
+  %li.active
+    Channel list
+
+%table.table.table-hover
+  %thead
+    %th
+      Name
+    %th
+      Queue
+    %th
+      Connects
+    %th
+      Payload
+    %th
+      Fake
+    %th
+      Enable
+    %th
+      Server status
+
+  %tbody.channel
+    - @channels.each do |channel|
+      %tr
+        %td
+          = link_to channel.name, channels_messages_index_path(channel_id: channel.id)
+        %td
+          = channel.queue_name
+        %td
+          = channel.channel_connections.length
+        %td
+          - if channel.is_payload
+            %span.label.label-success
+              YES
+          - else
+            %span.label.label-default
+              NO
+        %td
+          - if channel.is_fake
+            %span.label.label-success
+              YES
+          - else
+            %span.label.label-default
+              NO
+        %td
+          - if channel.is_enable
+            %span.label.label-success
+              YES
+          - else
+            %span.label.label-default
+              NO
+        %td
+          not implement
+
+:javascript
+  $(document).ready( function() {
+    tableChannelClickRedirect();
+  });

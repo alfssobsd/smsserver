@@ -1,0 +1,4 @@
+rabbitmq:
+  uri: amqp://guest:guest@10.211.55.3:5672
+  queue_prefix: smsserver-message-
+  connect_timeout: 10

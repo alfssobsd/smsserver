@@ -1,0 +1,48 @@
+.row
+  .col-lg-12
+    %ol.breadcrumb
+      %li
+        = link_to channels_messages_index_path(@channel) do
+          Channel (#{@channel.name})
+      - if local_assigns[:is_new]
+        %li
+          Message
+        %li.active
+          New
+      - elsif local_assigns[:is_show]
+        %li
+          Message
+        %li.active
+          Show (#{@message.id})
+      - else
+        %li.active
+          Message list
+
+.row
+  .col-lg-12
+    .channel-status
+      %ul
+        %li
+          is_payload:
+          - if @channel.is_payload
+            %span.label.label-success
+              YES
+          - else
+            %span.label.label-default
+              NO
+        %li
+          is_fake:
+          - if @channel.is_fake
+            %span.label.label-success
+              YES
+          - else
+            %span.label.label-default
+              NO
+        %li
+          is_enable:
+          - if @channel.is_enable
+            %span.label.label-success
+              YES
+          - else
+            %span.label.label-default
+              NO
