@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140812113025) do
+ActiveRecord::Schema.define(version: 20140813131151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,9 @@ ActiveRecord::Schema.define(version: 20140812113025) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "channels", ["name", "queue_name"], name: "index_channels_on_name_and_queue_name", unique: true, using: :btree
+  add_index "channels", ["name"], name: "index_channels_on_name", unique: true, using: :btree
 
   create_table "memberships", force: true do |t|
     t.integer  "channel_id"
@@ -107,9 +110,12 @@ ActiveRecord::Schema.define(version: 20140812113025) do
     t.datetime "updated_at"
     t.boolean  "is_admin",               default: false
     t.string   "token"
+    t.string   "username"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["username", "email"], name: "index_users_on_username_and_email", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
 end
