@@ -5,25 +5,99 @@
     = javascript_include_tag "application"
     = csrf_meta_tags
   %body
-    .navbar.navbar-default.navbar-static-top{rolse:"navigation"}
-      .container
-        .navbar-header
-          %button.navbar-toggle{"data-toggle"=>"collapse", "data-target" => ".navbar-collapse"}
-            %span.sr-only
-              Toggle navigation
-            %span.icon-bar
-            %span.icon-bar
-            %span.icon-bar
-          = link_to "SmsServer", root_path, class: "navbar-brand"
-        .navbar-collapse.collapse
-          %ul.nav.navbar-nav
-            %li.active
-              = link_to "Channels", channels_path
+    .container-fluid
+      .row
+        .col-lg-2.left-sidebar
+          %ul.nav.nav-left-sidebar
+            %li.login-info
+              = link_to '#' do
+                = user_avatar(current_user, { size: 32})
+                = current_user.email
+            %li{class: is_active?('(channel|message)')}
+              = link_to channels_path do
+                %span.glyphicon.glyphicon-tasks
+                Channels
+              - if is_active?('(channel|message)')
+                %ul.nav.sub-action
+                  %li{ class: is_active?('channel', 'index')}
+                    = link_to channels_path do
+                      %span.glyphicon.glyphicon-list
+                      List
+                  - if is_active?('message')
+                    %li.channel-name
+                      = link_to channels_messages_page_path(@channel) do
+                        = @channel.name
+                        = yes_no_label_tag(@channel.is_enable, 'ENABLE', 'DISABLE')
+                    %li{class: is_active?('message', 'index')}
+                      = link_to channels_messages_page_path(@channel), class: 'channel-action' do
+                        = fa_icon 'comments-o'
+                        List
+                    %li{ class: is_active?('message', '(new|create)')}
+                      = link_to channels_messages_new_path(@channel), class: 'channel-action' do
+                        %span.glyphicon.glyphicon-plus
+                        Create
+                    - if is_active?('message', 'show')
+                      %li.active
+                        = link_to channels_messages_show_path(@channel, @message), class: 'channel-action' do
+                          = fa_icon 'comment-o'
+                          Show
 
-          %ul.nav.navbar-nav.navbar-right
-            %li.active
-              = link_to "Login", "#"
+            %li.group-menu-name
+              = link_to '#' do
+                Settings
+            %li{ class: is_active?('admin/users')}
+              = link_to admin_users_list_path do
+                %span.glyphicon.glyphicon-user
+                Users
+              - if is_active?('admin/users')
+                %ul.nav.sub-action
+                  %li{ class: is_active?('admin/users', 'list')}
+                    = link_to admin_users_list_path do
+                      %span.glyphicon.glyphicon-list
+                      List
+                  %li{ class: is_active?('admin/users', '(new|create)')}
+                    = link_to admin_users_new_path do
+                      %span.glyphicon.glyphicon-plus
+                      Create
+                  - if is_active?('admin/users', '(edit|update)')
+                    %li.active
+                      = link_to admin_users_edit_path do
+                        %span.glyphicon.glyphicon-edit
+                        Edit
+            %li{ class: is_active?('admin/channels')}
+              = link_to admin_channels_list_path do
+                %span.glyphicon.glyphicon-tasks
+                Channels
+              - if is_active?('admin/channels')
+                %ul.nav.sub-action
+                  %li{ class: is_active?('admin/channels', 'list')}
+                    = link_to admin_channels_list_path do
+                      %span.glyphicon.glyphicon-list
+                      List
+                  %li{ class: is_active?('admin/channels', '(new|create)')}
+                    = link_to admin_channels_new_path do
+                      %span.glyphicon.glyphicon-plus
+                      Create
+                  - if is_active?('admin/channels', '(edit|update)')
+                    %li.active
+                      = link_to admin_channels_edit_path do
+                        %span.glyphicon.glyphicon-edit
+                        Edit
 
-    .container
-      .content
-        = yield
+            %li.logout
+              = link_to destroy_user_session_path, method: :delete do
+                Log out
+
+        .col-lg-10.col-lg-offset-2.main
+          - flash.each do |name, msg|
+            %div{class: flash_class(name) }
+              %button.close{type: "button", "data-dismiss" => "alert", "aria-hidden" => "true"}
+                &times;
+              = msg
+          = content_for?(:content) ? yield(:content) : yield
+
+
+
+    -#.footer
+    -#  .container
+    -#    test

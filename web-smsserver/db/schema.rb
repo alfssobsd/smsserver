@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140320203136) do
+ActiveRecord::Schema.define(version: 20140812113025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,22 +25,28 @@ ActiveRecord::Schema.define(version: 20140320203136) do
 
   add_index "channel_connections", ["channel_id"], name: "index_channel_connections_on_channel_id", using: :btree
 
+  create_table "channel_permission_types", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "channels", force: true do |t|
     t.string   "name"
     t.string   "queue_name"
-    t.string   "smpp_host"
-    t.integer  "smpp_port"
-    t.string   "smpp_username"
-    t.string   "smpp_password"
-    t.string   "smpp_source_addr"
-    t.integer  "smpp_source_ton"
-    t.integer  "smpp_source_npi"
-    t.integer  "smpp_dest_ton"
-    t.integer  "smpp_dest_npi"
-    t.integer  "smpp_max_split_message"
-    t.integer  "smpp_max_message_per_second"
-    t.integer  "smpp_reconnect_timeout"
-    t.integer  "smpp_enquire_link_interval"
+    t.string   "smpp_host",                   default: "localhost"
+    t.integer  "smpp_port",                   default: 3700
+    t.string   "smpp_username",               default: "username"
+    t.string   "smpp_password",               default: "password"
+    t.string   "smpp_source_addr",            default: "source_addr"
+    t.integer  "smpp_source_ton",             default: 5
+    t.integer  "smpp_source_npi",             default: 1
+    t.integer  "smpp_dest_ton",               default: 1
+    t.integer  "smpp_dest_npi",               default: 1
+    t.integer  "smpp_max_split_message",      default: 12
+    t.integer  "smpp_max_message_per_second", default: 20
+    t.integer  "smpp_reconnect_timeout",      default: 30
+    t.integer  "smpp_enquire_link_interval",  default: 60
     t.boolean  "is_payload",                  default: false
     t.boolean  "is_fake",                     default: false
     t.boolean  "is_enable",                   default: true
@@ -48,13 +54,15 @@ ActiveRecord::Schema.define(version: 20140320203136) do
     t.datetime "updated_at"
   end
 
-  create_table "channels_users", id: false, force: true do |t|
-    t.integer "channel_id"
-    t.integer "user_id"
+  create_table "memberships", force: true do |t|
+    t.integer  "channel_id"
+    t.integer  "channel_permission_type_id"
+    t.integer  "member_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "channels_users", ["channel_id", "user_id"], name: "index_channels_users_on_channel_id_and_user_id", using: :btree
-  add_index "channels_users", ["user_id"], name: "index_channels_users_on_user_id", using: :btree
+  add_index "memberships", ["channel_id", "member_id"], name: "index_memberships_on_channel_id_and_member_id", unique: true, using: :btree
 
   create_table "message_statuses", force: true do |t|
     t.string   "name"
@@ -85,18 +93,20 @@ ActiveRecord::Schema.define(version: 20140320203136) do
   add_index "messages", ["message_status_id"], name: "index_messages_on_message_status_id", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                  default: "",    null: false
+    t.string   "encrypted_password",     default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_admin",               default: false
+    t.string   "token"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

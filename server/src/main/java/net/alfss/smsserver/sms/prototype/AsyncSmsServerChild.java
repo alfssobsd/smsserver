@@ -3,6 +3,7 @@ package net.alfss.smsserver.sms.prototype;
 import com.google.common.util.concurrent.RateLimiter;
 import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.database.entity.Channel;
+import net.alfss.smsserver.rabbit.prototype.Queue;
 import net.alfss.smsserver.sms.interfaces.AsyncSmsServerThreadInterface;
 import net.alfss.smsserver.sms.pool.SmsServerConnectPool;
 import org.slf4j.Logger;
@@ -82,4 +83,31 @@ public class AsyncSmsServerChild extends Thread implements AsyncSmsServerThreadI
         logger.info(this.getClass().getSimpleName() + ": " + s);
     }
 
+    protected void waitRecconectSmpp() {
+        try {
+            errorMessage("Error connect to SMPP, recconect to after " + channel.getSmppReconnectTimeOutInMs()/1000 + " seconds");
+            sleep(channel.getSmppReconnectTimeOutInMs());
+        } catch (InterruptedException e1) {
+            errorMessage("error sleep ", e1);
+        }
+    }
+
+    protected void waitRecconectDatabase() {
+        try {
+            errorMessage("Error connect to Database, recconect to after " + channel.getSmppReconnectTimeOutInMs()/1000 + " seconds");
+            sleep(channel.getSmppReconnectTimeOutInMs());
+        } catch (InterruptedException e1) {
+            errorMessage("error sleep ", e1);
+        }
+
+    }
+
+    protected void waitRecconectRabbitMq(Queue queue) {
+        try {
+            errorMessage("Error connect to RabbitMQ, recconect to after " + queue.getConnectTimeOutInMs()/1000 + " seconds");
+            sleep(queue.getConnectTimeOutInMs());
+        } catch (InterruptedException e1) {
+            errorMessage("error sleep ", e1);
+        }
+    }
 }

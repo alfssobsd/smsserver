@@ -56,6 +56,9 @@ public class Message {
     @Column(name = "send_retry")
     private int sendRetry = 0;
 
+    @Column(name = "error_code")
+    private int errorCode;
+
     @ManyToOne
     public Channel channel;
 
@@ -183,5 +186,13 @@ public class Message {
 
     public void setSendRetry(int sendRetry) {
         this.sendRetry = sendRetry;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
     }
 }

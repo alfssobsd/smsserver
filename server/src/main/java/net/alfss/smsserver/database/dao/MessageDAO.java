@@ -16,8 +16,8 @@ public interface MessageDAO {
     public void create(Message message, Channel channel);
     public void update(Message message);
     public Message getWaitResponse(int sequenceNumber, Channel channel);
-    public Message getWaiteDelivery(int messageSmsId, String queue);
-    public Message getWaiteDelivery(int messageSmsId, Channel channel);
+    public Message getWaiteDelivery(String messageSmsId, String queue);
+    public Message getWaiteDelivery(String messageSmsId, Channel channel);
     public void setStatusFail(Message message);
     public void setStatusFail(int messageId);
     public void setStatusSuccess(Message message);

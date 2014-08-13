@@ -38,32 +38,6 @@ public abstract class Queue {
         this.enableConsumer = enableConsumer;
     }
 
-
-    protected void createExchangeDirect(String exchangeName, Channel channel) throws IOException {
-        // exchange, type, durable, autoDelete, arguments
-        channel.exchangeDeclare(exchangeName, "direct", true, false, null);
-    }
-
-    protected QueueingConsumer createConsumer(String queueName, boolean autoAck, Channel channel) throws IOException {
-        QueueingConsumer consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, autoAck, consumer);
-        return consumer;
-    }
-
-    protected void initConnect(Channel channel) throws IOException {
-        createQueue(channel);
-        if (enableConsumer) setConsumer(createConsumer(getQueueName(), false, channel));
-        setNeedInit(false);
-    }
-
-    protected void createQueue(Channel channel) throws IOException { }
-
-    protected void checkNeedInit(Channel channel) throws IOException {
-        if (isNeedInit()) {
-            initConnect(channel);
-        }
-    }
-
     public void setConsumer(QueueingConsumer consumer) {
         this.consumer = consumer;
     }
@@ -100,11 +74,37 @@ public abstract class Queue {
         this.needInit = needInit;
     }
 
+    public int getConnectTimeOutInMs() {
+        return config.getRabbitConnectTimeOut() * 1000;
+    }
+
+    protected void createExchangeDirect(String exchangeName, Channel channel) throws IOException {
+        // exchange, type, durable, autoDelete, arguments
+        channel.exchangeDeclare(exchangeName, "direct", true, false, null);
+    }
+
+    protected QueueingConsumer createConsumer(String queueName, boolean autoAck, Channel channel) throws IOException {
+        QueueingConsumer consumer = new QueueingConsumer(channel);
+        channel.basicConsume(queueName, autoAck, consumer);
+        return consumer;
+    }
+
+    protected void initConnect(Channel channel) throws IOException {
+        createQueue(channel);
+        if (enableConsumer) setConsumer(createConsumer(getQueueName(), false, channel));
+        setNeedInit(false);
+    }
+
+    protected void createQueue(Channel channel) throws IOException { }
+
+    protected void checkNeedInit(Channel channel) throws IOException {
+        if (isNeedInit()) {
+            initConnect(channel);
+        }
+    }
+
     protected boolean isNeedInit() {
         return needInit;
     }
 
-    public int getConnectTimeOutInMs() {
-        return config.getRabbitConnectTimeOut() * 1000;
-    }
 }

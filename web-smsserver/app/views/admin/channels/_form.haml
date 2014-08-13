@@ -1,0 +1,75 @@
+-# fix chrome autcomlpleate=off
+= text_field_tag :prevent_autofill, "", style: "display:none;"
+= password_field_tag :password_fake, "",  style: "display:none;"
+
+.form-group
+  = f.label :name
+  = f.text_field :name, class: "form-control", placeholder: "name", autofocus: true, required: true, autocomplete: "off"
+
+.form-group
+  = f.label :queue_name
+  = f.text_field :queue_name, class: "form-control", autocomplete: "off", required: true
+
+.form-group
+  = f.check_box :is_enable
+  = f.label :is_enable
+
+.form-group
+  = f.check_box :is_fake
+  = f.label :is_fake
+
+.form-group
+  = f.check_box :is_payload
+  = f.label :is_payload
+
+.form-group
+  = f.label :smpp_host
+  = f.text_field :smpp_host, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_port
+  = f.text_field :smpp_port, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_username
+  = f.text_field :smpp_username, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_password
+  = f.text_field :smpp_password, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_source_addr
+  = f.text_field :smpp_source_addr, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_source_ton
+  = f.text_field :smpp_source_ton, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_source_npi
+  = f.text_field :smpp_source_npi, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_dest_ton
+  = f.text_field :smpp_dest_ton, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_dest_npi
+  = f.text_field :smpp_dest_npi, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_max_split_message
+  = f.text_field :smpp_max_split_message, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_max_message_per_second
+  = f.text_field :smpp_max_message_per_second, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_reconnect_timeout
+  = f.text_field :smpp_reconnect_timeout, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :smpp_enquire_link_interval
+  = f.text_field :smpp_enquire_link_interval, class: "form-control", autocomplete: "off"

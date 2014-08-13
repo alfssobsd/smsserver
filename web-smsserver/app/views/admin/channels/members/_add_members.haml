@@ -1,0 +1,14 @@
+= form_for :memberships, url: admin_channels_members_create_path(@channel) , method: :post, html:{class: "form-inline"}  do |f|
+  .form-group
+    = f.select :channel_permission_type_id, ChannelPermissionType.all.collect  { |p| [ p.name, p.id ] }
+  .form-group
+    = f.hidden_field :member_id, value: 0, class:"bigdrop searchUser form-control", style: "min-width: 300px;"
+  = f.hidden_field :channel_id, value: @channel.id
+  = f.submit '+', :class => "btn btn-primary"
+
+
+:javascript
+  $(document).ready( function() {
+    suggestUser();
+    $("#memberships_channel_permission_type_id").select2();
+  });

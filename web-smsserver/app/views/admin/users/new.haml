@@ -1,0 +1,15 @@
+- if @user.errors.full_messages.any?
+  .alert.alert-warning.alert-dismissable
+    %ul
+      - @user.errors.full_messages.each do |msg|
+        %li
+          = msg
+
+= form_for :user, url: admin_users_create_path do |f|
+  = render :partial => "form", :locals => { :f => f }
+  = f.submit 'Create', :class => "btn btn-primary"
+
+:javascript
+  $(document).ready( function() {
+    $("[type='checkbox']").bootstrapSwitch();
+  });

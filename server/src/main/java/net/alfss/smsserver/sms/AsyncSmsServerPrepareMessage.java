@@ -7,11 +7,13 @@ import net.alfss.smsserver.database.dao.impl.MessageStatusDAOImpl;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.entity.Message;
 import net.alfss.smsserver.database.entity.MessageStatus;
+import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.rabbit.data.InboundMessage;
+import net.alfss.smsserver.rabbit.exceptions.RabbitMqException;
 import net.alfss.smsserver.rabbit.exceptions.RabbitMqQueueConnectException;
 import net.alfss.smsserver.rabbit.exceptions.RabbitMqQueueMappingException;
-import net.alfss.smsserver.rabbit.queue.QueueInbound;
-import net.alfss.smsserver.rabbit.queue.QueueSend;
+import net.alfss.smsserver.rabbit.queue.QueueDirectInbound;
+import net.alfss.smsserver.rabbit.queue.QueueDirectSend;
 import net.alfss.smsserver.sms.pool.SmsServerConnectPool;
 import net.alfss.smsserver.sms.prototype.AsyncSmsServerChild;
 import org.smpp.Data;
@@ -29,10 +31,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
 
-    private final QueueInbound inboundQueue;
+    private final QueueDirectInbound inboundQueue;
     private final MessageDAOImpl messageDAO;
     private final MessageStatusDAOImpl statusDAO;
-    private final QueueSend sendQueue;
+    private final QueueDirectSend sendQueue;
     private InboundMessage inboundMessage = null;
     private byte uniqIdMessage = (byte) 0x00;
 
@@ -43,11 +45,9 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
                                         RateLimiter rateLimiter,
                                         AtomicInteger seqNumber) {
         super(config, channel, connectPool, rateLimiter, seqNumber);
+        this.inboundQueue = new QueueDirectInbound(config, channel, true);
+        this.sendQueue = new QueueDirectSend(config, channel, false);
 
-        ArrayList<String> routingKey = new ArrayList<>();
-        routingKey.add(channel.getQueueName());
-        this.inboundQueue = new QueueInbound(config, config.getRabbitQueueMessage(), channel.getQueueName(), true, routingKey);
-        this.sendQueue = new QueueSend(config, channel.getName() + "-send", channel.getName() + "-send", false);
         this.messageDAO = new MessageDAOImpl();
         this.statusDAO = new MessageStatusDAOImpl();
     }
@@ -58,10 +58,22 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
         setRunning(true);
         errorMessage("start (channel = " + channel.getName() + ")");
         do {
-            processingMessage();
+            try {
+                processingMessage();
+            } catch (RabbitMqQueueConnectException | RabbitMqException e) {
+                waitRecconectRabbitMq(sendQueue);
+            } catch (DatabaseError e) {
+                errorMessage("error ", e);
+                waitRecconectDatabase();
+            } catch (NullPointerException e) {
+                debugMessage("NullPointerException", e);
+            } catch (Exception e) {
+                debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
+            }
         } while (isRunning() & !isInterrupted());
     }
 
+    //TODO:нужно возвращать в inboundQueue сообшения если есть проблемы!
     private void processingMessage() {
 
         //get inboundMessage
@@ -116,7 +128,7 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
         message.setQueueName(channel.getQueueName());
         message.setChannel(channel);
         message.setEsmClass(esmClass);
-//        message.setFrom(inboundMessage.getFrom());
+        message.setFrom(inboundMessage.getFrom());
         message.setTo(inboundMessage.getTo());
         message.setMessageData(byteMessage.getBuffer());
         message.setMessageStatus(messageStatus);

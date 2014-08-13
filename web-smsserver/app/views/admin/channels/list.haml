@@ -1,0 +1,30 @@
+%table.table.table-hover
+  %thead
+    %th
+      Name
+    %th
+      Queue
+    %th
+      Connects
+    %th
+      Payload
+    %th
+      Fake
+    %th
+      Enable
+
+  %tbody.channel
+    - @channels.each do |channel|
+      %tr
+        %td
+          = link_to channel.name, admin_channels_edit_path(channel.id)
+        %td
+          = channel.queue_name
+        %td
+          = channel.channel_connections.length
+        %td
+          = yes_no_label_tag(channel.is_payload)
+        %td
+          = yes_no_label_tag(channel.is_fake)
+        %td
+          = yes_no_label_tag(channel.is_enable, 'ENABLE', 'DISABLE')

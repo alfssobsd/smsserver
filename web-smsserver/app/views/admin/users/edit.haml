@@ -1,0 +1,32 @@
+- if @user.errors.full_messages.any?
+  .alert.alert-warning.alert-dismissable
+    %ul
+      - @user.errors.full_messages.each do |msg|
+        %li
+          = msg
+.col-lg-5
+  = form_for :user, url: admin_users_update_path(@user), method: :put  do |f|
+    = render :partial => "form", :locals => { :f => f }
+    = f.submit 'Update', :class => "btn btn-primary"
+.col-lg-5
+  %h3
+    Channels
+
+  %table.table
+    %thead
+      %th
+        channel
+      %th
+        permission
+    %tbody
+      - @user.memberships.each do |membership|
+        %tr
+          %td
+            = membership.channel.name
+          %td
+            = membership.channel_permission_type.name
+
+:javascript
+  $(document).ready( function() {
+    $("[type='checkbox']").bootstrapSwitch();
+  });

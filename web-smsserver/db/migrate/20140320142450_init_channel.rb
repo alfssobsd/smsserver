@@ -16,7 +16,7 @@ class InitChannel < ActiveRecord::Migration
                       smpp_max_split_message: 12,
                       smpp_max_message_per_second: 20,
                       smpp_reconnect_timeout: 10,
-                      smpp_enquire_link_interval: 5,
+                      smpp_enquire_link_interval: 60,
                       is_payload: false,
                       is_fake: false,
                       is_enable: true)

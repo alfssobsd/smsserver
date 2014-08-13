@@ -1,0 +1,20 @@
+.col-lg-5
+  - if @channel.errors.full_messages.any?
+    .alert.alert-warning.alert-dismissable
+      %ul
+        - @channel.errors.full_messages.each do |msg|
+          %li
+            = msg
+
+  = form_for :channel, url: admin_channels_create_path, method: :post  do |f|
+    = render :partial => "form", :locals => { :f => f }
+    = f.submit 'Create', :class => "btn btn-primary"
+
+-#.col-lg-5
+-#  test
+
+
+:javascript
+  $(document).ready( function() {
+    $("[type='checkbox']").bootstrapSwitch();
+  });

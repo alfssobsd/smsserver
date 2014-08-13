@@ -1,6 +1,7 @@
 package net.alfss.smsserver.sms.pool;
 
 
+import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.entity.ChannelConnection;
 import net.alfss.smsserver.sms.AsyncSmsServerEventListener;
@@ -27,8 +28,8 @@ import org.smpp.pdu.Response;
 public class SmsServerConnectPool extends Pool<Session> {
     final Logger logger = (Logger) LoggerFactory.getLogger(SmsServerConnectPool.class);
 
-    public SmsServerConnectPool(final GenericObjectPoolConfig poolConfig, final Channel channel, final ChannelConnection channelConnection) {
-        super(poolConfig, new SmsServerFactory(channel, channelConnection));
+    public SmsServerConnectPool(final GenericObjectPoolConfig poolConfig, GlobalConfig config, final Channel channel, final ChannelConnection channelConnection) {
+        super(poolConfig, new SmsServerFactory(config ,channel, channelConnection));
     }
 
     private static class SmsServerFactory extends BasePooledObjectFactory<Session> {
@@ -36,10 +37,12 @@ public class SmsServerConnectPool extends Pool<Session> {
 
         private final Channel channel;
         private final ChannelConnection channelConnection;
+        private final GlobalConfig config;
 
-        public SmsServerFactory(Channel channel, ChannelConnection channelConnection) {
+        public SmsServerFactory(GlobalConfig config, Channel channel, ChannelConnection channelConnection) {
             this.channel = channel;
             this.channelConnection = channelConnection;
+            this.config = config;
         }
 
         @Override
@@ -53,7 +56,7 @@ public class SmsServerConnectPool extends Pool<Session> {
             bindRequest.setPassword(channel.getSmppPassword());
             bindRequest.setSystemType(channelConnection.getSmppSystemType());
             bindRequest.setAddressRange("");
-            AsyncSmsServerEventListener pduListener = new AsyncSmsServerEventListener(channel);
+            AsyncSmsServerEventListener pduListener = new AsyncSmsServerEventListener(config, channel);
             Response response = session.bind(bindRequest, pduListener);
             if(response.getCommandStatus() != Data.ESME_ROK) {
                 throw  new SmsServerConnectionException("Error connect STATUS = " + response.getCommandStatus());

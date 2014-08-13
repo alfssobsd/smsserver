@@ -1,8 +1,13 @@
 package net.alfss.smsserver.sms;
 
+import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.database.dao.impl.MessageDAOImpl;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.entity.Message;
+import net.alfss.smsserver.rabbit.data.ResponseMessage;
+import net.alfss.smsserver.rabbit.exceptions.RabbitMqQueueConnectException;
+import net.alfss.smsserver.rabbit.queue.QueueDirectResponse;
+import net.alfss.smsserver.sms.exceptions.SmsServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smpp.Data;
@@ -14,9 +19,6 @@ import org.smpp.pdu.EnquireLinkResp;
 import org.smpp.pdu.PDU;
 import org.smpp.pdu.SubmitSMResp;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * User: alfss
  * Date: 16.11.13
@@ -25,16 +27,17 @@ import java.util.regex.Pattern;
 public class AsyncSmsServerEventListener extends SmppObject implements ServerPDUEventListener {
 
     private final Channel channel;
+    private final QueueDirectResponse responseQueue;
     private final MessageDAOImpl messageDAO;
-    Pattern deliverMessageId = Pattern.compile("^id:(.*) sub:");
-    Pattern deliverStat = Pattern.compile("stat:([A-Z]+)");
-    Pattern deliverError = Pattern.compile("err:([0-9]+)");
 
     final Logger logger = (Logger) LoggerFactory.getLogger(AsyncSmsServerEventListener.class);
 
-    public AsyncSmsServerEventListener(Channel channel) {
+
+    //TODO: убедится что все ошибки обрабатываются.
+    public AsyncSmsServerEventListener(GlobalConfig config, Channel channel) {
         this.channel = channel;
         this.messageDAO = new MessageDAOImpl();
+        this.responseQueue = new QueueDirectResponse(config, channel, false);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class AsyncSmsServerEventListener extends SmppObject implements ServerPDU
 
             if (pdu.isRequest()) {
                 if (commandId == Data.DELIVER_SM) {
-                    handlerDeliver((DeliverSM) pdu);
+                    handlerDeliver((DeliverSM) pdu, pdu);
                 } else {
                     logger.error(channel.getName() + ":async request received not implement" + pdu.debugString());
                 }
@@ -55,7 +58,7 @@ public class AsyncSmsServerEventListener extends SmppObject implements ServerPDU
                 } else if (pdu.getClass() == SubmitSMResp.class) {
                     handlerSubmitSMResp((SubmitSMResp) pdu);
                 } else {
-                    logger.error(channel.getName() + ":async response received " + pdu.debugString());
+                    logger.debug(channel.getName() + ":async response received " + pdu.debugString());
                 }
             } else {
                 logger.error(channel.getName() + ":pdu of unknown class (not request nor " + "response)" +
@@ -98,8 +101,8 @@ public class AsyncSmsServerEventListener extends SmppObject implements ServerPDU
 
 
     private void handlerSubmitSMResp(SubmitSMResp response) {
-        logger.error("messageId:" + response.getMessageId());
-        logger.error("SequenceNumber:" + response.getSequenceNumber());
+        logger.debug("messageId:" + response.getMessageId());
+        logger.debug("SequenceNumber:" + response.getSequenceNumber());
 
         Message message = messageDAO.getWaitResponse(response.getSequenceNumber(), channel);
         switch (response.getCommandStatus()) {
@@ -125,53 +128,14 @@ public class AsyncSmsServerEventListener extends SmppObject implements ServerPDU
 
     }
 
-
-    private void handlerDeliver(DeliverSM deliverSM) {
-        logger.error(channel.getName() + ":async deliverSM" + deliverSM.debugString());
-        logger.error("msg_id: " +  getDeliverMessageId(deliverSM.getShortMessage()));
-        logger.error("msg_stat: " +  getDeliverStat(deliverSM.getShortMessage()));
-        logger.error("msg_err_code: " +  getDeliverErrorCode(deliverSM.getShortMessage()));
-    }
-
-
-    private String getDeliverMessageId(String shortMessage) {
-        Matcher matcher = deliverMessageId.matcher(shortMessage);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        return null;
-    }
-
-
-    private int getDeliverErrorCode(String shortMessage) {
-        Matcher matcher = deliverError.matcher(shortMessage);
-        if (matcher.find()) {
-            return Integer.parseInt(matcher.group(1));
-        } else {
-            return 0;
+    private void handlerDeliver(DeliverSM deliverSM, PDU pdu) {
+        logger.debug(channel.getName() + ":async deliverSM" + deliverSM.debugString());
+        try {
+            responseQueue.publish(new ResponseMessage(deliverSM.getShortMessage(), pdu.getSequenceNumber()));
+        } catch (SmsServerException | RabbitMqQueueConnectException e) {
+            logger.error("Error connect to RabbitMQ ");
         }
     }
-    //Вернется статус UNDELIV и код ошибки, подробнее здесь http://smsc.ru/api/smpp/#errs
-    //251	Превышен лимит на один номер.	Превышен суточный лимит сообщений на один номер. Лимит устанавливается Клиентом в личном кабинете в пункте "Настройки". Также такая ошибка возможна при отправке более 50 сообщений одному абоненту, которые были отправлены с перерывом между сообщениями менее 30 секунд.
-    private int getDeliverStat(String shortMessage) {
-        Matcher matcher = deliverStat.matcher(shortMessage);
-        if (matcher.find()) {
-            switch (matcher.group(1)) {
-                case "DELIVRD":
-                    return 0;
-                case "EXPIRED":
-                    return 1;
-                case "UNDELIV":
-                    return 2;
-                case "REJECTD":
-                    return 3;
-            }
-        }
-
-        return 3;
-    }
-
 
 }
 

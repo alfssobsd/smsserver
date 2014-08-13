@@ -1,0 +1,132 @@
+.left-sidebar {
+  position: fixed;
+  top: 0px;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  background-color: #3a3633;
+}
+
+
+.nav-left-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+  li {
+    a {
+      color: #a8a8a8;
+      background-color: #3a3633;
+      &:hover, &:focus {
+        color: #fff;
+        background-color: #3a3633;
+      }
+      &:before {
+        content: "\f196";
+        font-family: FontAwesome;
+        display: block;
+        line-height: normal;
+        position: absolute;
+        font-size: 30px;
+        right: 15px;
+        top: 5px;
+      }
+    }
+  }
+
+  .active {
+    color: #fff;
+    a {
+      &, &:hover, &:focus {
+        color: #fff;
+        background-color: #3a3633;
+      }
+
+    }
+    a:before {
+      content: "\f147";
+    }
+  }
+
+  .login-info {
+    border-bottom: 1px solid #111;
+    a {
+      &:before {
+        content: "";
+      }
+    }
+  }
+
+  .group-menu-name {
+    padding-top: 20px;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #111;
+    a {
+      &:before {
+        content: "";
+      }
+    }
+  }
+
+
+  .logout {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    a:before {
+      content: "\f08b";
+    }
+  }
+
+  .sub-action {
+    li {
+      a {
+        color: #a8a8a8;
+        padding-right: 20px;
+        padding-left: 20px;
+        background: #454545;
+        &:hover {
+          color: #fff;
+          background-color: rgba(69,69,69,.8);
+        }
+        &:before {
+          content: "";
+        }
+      }
+    }
+
+    .active {
+      a {
+        &, &:hover, &:focus {
+          color: #fff;
+          background-color: rgba(69,69,69,.8);
+        }
+        &:before {
+          content: "\f0d9";
+          right: -1px;
+        }
+      }
+    }
+
+    .channel-name {
+      a {
+        &, &:hover, &:focus {
+          color: #fff;
+          background-color: #428bca;
+        }
+        &:before {
+          content: "";
+        }
+      }
+    }
+
+    .channel-action {
+      padding-left: 35px;
+    }
+  }
+}

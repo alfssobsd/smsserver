@@ -67,7 +67,7 @@
     <rabbit-host>10.211.55.3</rabbit-host>
     <rabbit-port>5672</rabbit-port>
     <rabbit-vhost>/</rabbit-vhost>
-    <rabbit-queue-message>smsserver-message</rabbit-queue-message>
+    <rabbit-queue-prefix>smsserver-message-</rabbit-queue-prefix>
     <rabbit-connect-timeout>10</rabbit-connect-timeout>
     <rabbit-user>guest</rabbit-user>
     <rabbit-password>guest</rabbit-password>

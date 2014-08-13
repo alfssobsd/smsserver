@@ -1,7 +1,3 @@
-%ol.breadcrumb
-  %li.active
-    Channel list
-
 %table.table.table-hover
   %thead
     %th
@@ -29,30 +25,16 @@
         %td
           = channel.channel_connections.length
         %td
-          - if channel.is_payload
-            %span.label.label-success
-              YES
-          - else
-            %span.label.label-default
-              NO
+          = yes_no_label_tag(channel.is_payload)
         %td
-          - if channel.is_fake
-            %span.label.label-success
-              YES
-          - else
-            %span.label.label-default
-              NO
+          = yes_no_label_tag(channel.is_fake)
         %td
-          - if channel.is_enable
-            %span.label.label-success
-              YES
-          - else
-            %span.label.label-default
-              NO
+          = yes_no_label_tag(channel.is_enable, 'ENABLE', 'DISABLE')
         %td
-          not implement
+          not implemented
 
 :javascript
   $(document).ready( function() {
     tableChannelClickRedirect();
+    $("[type='checkbox']").bootstrapSwitch();
   });

@@ -37,42 +37,40 @@ public class AsyncSmsServer extends Thread {
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
         poolConfig.setMaxTotal(1);
 
-        //TODO: падает при отстуствии сервера или проблемах с коннектом!!!
         ChannelConnectionDAOImpl channelConnectionDAO = new ChannelConnectionDAOImpl();
         for (Object obj: channelConnectionDAO.getList(channel)) {
-            this.connectPoolList.add(new SmsServerConnectPool(poolConfig, channel, (ChannelConnection) obj));
+            this.connectPoolList.add(new SmsServerConnectPool(poolConfig, config, channel, (ChannelConnection) obj));
         }
     }
 
     @Override
     public void run() {
-                          //TODO: нужно сделать пас демо меньше -> demopass
         for (SmsServerConnectPool connectPool : this.connectPoolList) {
             logger.error("AsyncSmsServer: start (channel = " + channel.getName() + ")");
-            AsyncSmsServerEnquireLink serverEnquireLink = new AsyncSmsServerEnquireLink(config, channel,
-                    connectPool, rateLimiter, seqNumber);
-            AsyncSmsServerPrepareMessage prepareMessage = new AsyncSmsServerPrepareMessage(config, channel,
-                    connectPool, rateLimiter, seqNumber);
-            AsyncSmsServerSubmitter submitter = new AsyncSmsServerSubmitter(config, channel,
-                    connectPool, rateLimiter, seqNumber);
+            AsyncSmsServerEnquireLink enquireLink = new AsyncSmsServerEnquireLink(config, channel, connectPool, rateLimiter, seqNumber);
+            AsyncSmsServerPrepareMessage prepareMessage = new AsyncSmsServerPrepareMessage(config, channel, connectPool, rateLimiter, seqNumber);
+            AsyncSmsServerSubmitter submitter = new AsyncSmsServerSubmitter(config, channel, connectPool, rateLimiter, seqNumber);
+            AsyncSmsServerFakeSubmitter fakeSubmitter = new AsyncSmsServerFakeSubmitter(config, channel, connectPool, rateLimiter, seqNumber);
+            AsyncSmsServerDeliverResponser deliverResponser = new AsyncSmsServerDeliverResponser(config, channel, connectPool, rateLimiter, seqNumber);
+
 
             while (true) {
-                if(!serverEnquireLink.isRunning())
-                    serverEnquireLink.start();
 
-                if (!submitter.isRunning())
-                    submitter.start();
+                if (!prepareMessage.isRunning()) prepareMessage.start();
 
-                if (!prepareMessage.isRunning())
-                    prepareMessage.start();
-//
-
+                if (channel.isFake()) {
+                    if (!fakeSubmitter.isRunning()) fakeSubmitter.start();
+                } else {
+                    if (!deliverResponser.isRunning()) deliverResponser.start();
+                    if (!enquireLink.isRunning()) enquireLink.start();
+                    if (!submitter.isRunning()) submitter.start();
+                }
 
                 synchronized (syncObject) {
                     try {
                         syncObject.wait();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        logger.debug("Interrupted", e);
                     }
                 }
             }

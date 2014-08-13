@@ -1,17 +1,21 @@
-= render 'breadcrumb', is_new: true
 
+- if @inbound_message.errors.full_messages.any?
+  .alert.alert-warning.alert-dismissable
+    %button.close{type: 'button', 'data-dismiss' => "alert", 'aria-hidden' => 'true'}
+      &times;
+    %ul
+      - @inbound_message.errors.full_messages.each do |msg|
+        %li
+          = msg
+= form_for :inbound_message, url:channels_messages_create_path(@channel), method: "post" do |f|
+  .form-group
+    = label_tag :to, "To :"
+    = f.text_field :to, class: "form-control"
+  .form-group
+    = label_tag :from, "From :"
+    = f.text_field :from, class: "form-control"
+  .form-group
+    = label_tag :message_text
+    = f.text_area :message_text, class: "form-control"
 
-.row
-  .col-lg-6
-    = form_tag(url:channels_messages_create_path, method: "get") do
-      .form-group
-        = label_tag :to, "To :"
-        = text_field_tag :to, '', class: "form-control"
-      .form-group
-        = label_tag :from, "From :"
-        = text_field_tag :from, @channel.smpp_source_addr, class: "form-control"
-      .form-group
-        = label_tag :text, "Text :"
-        = text_area_tag :message_text, 'test message', class: "form-control"
-
-      = submit_tag "Send", class:"btn btn-primary"
+  = submit_tag "Send", class:"btn btn-primary"

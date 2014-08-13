@@ -6,23 +6,22 @@ class RabbitSms
     self.queue_prefix = SMS_SERVER_CONF[:rabbitmq][:queue_prefix]
   end
 
-  def create_sms(channelt, messaget)
-
-    self.connect
-    message = JSON.dump({ subject: 'Test', id: 'abc' })
-    self.publish message
+  def create_sms(inbound_message)
+    p inbound_message.channel
+    p inbound_message.channel.queue_name
+    self.connect(self.queue_prefix + inbound_message.channel.queue_name)
+    self.publish inbound_message.to_json(:only => [ 'to', 'from', 'message_text' ])
     self.disconnect
   end
 
-
   protected
 
-  def connect
+  def connect(queue_bind)
     self.conn = Bunny.new(uri)
     self.conn.start
     channel  = conn.create_channel
-    self.exchange = channel.direct("helloworld", durable: true, auto_delete: false)
-    queue = channel.queue("helloworld", durable:true, exclusive: false, auto_delete: false, arguments: { "x-ha-policy" => "all" }).bind(self.exchange)
+    self.exchange = channel.direct(queue_bind, durable: true, auto_delete: false)
+    queue = channel.queue(queue_bind, durable:true, exclusive: false, auto_delete: false, arguments: { "x-ha-policy" => "all" }).bind(self.exchange)
   end
 
   def publish(message)

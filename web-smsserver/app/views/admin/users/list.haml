@@ -1,0 +1,32 @@
+%table.table
+  %thead
+    %th
+
+    %th
+      email
+    %th
+      admin
+    %th
+      token
+
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td
+          = user_avatar(user)
+        %td
+          = link_to user.email, admin_users_edit_path(user)
+        %td
+          - if user.is_admin?
+            %span.glyphicon.glyphicon-ok
+        %td
+          = user.token
+
+
+  -#= user_avatar(user)
+  -#= link_to user.email, admin_users_edit_path(user)
+  -#= user.token
+  -#= user.is_admin?
+  -#= user.updated_at
+  -#= link_to 'Delete', admin_users_destroy_path(user), method: :delete, data: { confirm: "are you delete user: " + user.email }
+  -#%br

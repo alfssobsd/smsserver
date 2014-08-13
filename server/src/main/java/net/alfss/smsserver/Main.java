@@ -3,6 +3,7 @@ package net.alfss.smsserver;
 import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.database.dao.impl.ChannelDAOImpl;
 import net.alfss.smsserver.database.entity.Channel;
+import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.http.WebServer;
 import net.alfss.smsserver.redis.RedisClient;
 import net.alfss.smsserver.sms.AsyncSmsServer;
@@ -14,8 +15,6 @@ import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.exceptions.JedisConnectionException;
-import redis.clients.jedis.exceptions.JedisDataException;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -93,7 +92,6 @@ public class Main implements Daemon {
         try {
             XMLConfiguration xml_config = new XMLConfiguration(configFile);
             globalConfig = new GlobalConfig(xml_config);
-//            SharedConfig.setGlobalConfig(globalConfig);
         } catch (ConfigurationException e) {
             logger.error(e.toString());
             exit(0);
@@ -101,126 +99,13 @@ public class Main implements Daemon {
 
         if (rabbitmqClientMessage != null) {
             logger.error(MessageFormat.format("############# RabbitMq send message client {0} #############", rabbitmqClientMessage));
-//            RabbitMQClient rabbitMQClient = new RabbitMQClient(globalConfig);
-//            rabbitMQClient.sendMessage(rabbitmqClientMessage);
             exit(0);
         }
-
-
 
         logger.error(MessageFormat.format("############# Start smsserver {0} #############", getVersion()));
         try {
 
-//            Flyway flyway = new Flyway();
-//            flyway.setDataSource(globalConfig.getDbUrl(), globalConfig.getDbUserName(), globalConfig.getDbPassword());
-//            flyway.migrate();
-//            MessageDAOImpl messageDAO = new MessageDAOImpl();
-//////            messageDAO.get(1);
-////
-//            ChannelDAOImpl channelDAO = new ChannelDAOImpl();
-//            Channel channel = channelDAO.get(1);
-////
-////            for (int i = 0; i < 150; i++) {
-//                Message message = new Message();
-//                String test = "Да и это не просто обычный словарь. Там используется русская морфология для лучшего поиска синонимов. Дополнив большим числом словоупотреблений из русскоязычных текстов можно значительно улучшить качество поиска, а так же отфильтровать далеко не идеальную базу слов.";
-//                message.setTo("79062783751");
-//                message.setMessageData(test.getBytes());
-//                message.setSequenceNumber(1);
-//                message.setPayload(false);
-//                messageDAO.create(message, channel);
-//            }
-
-//            ChannelDAOImpl channelDAO1 = new ChannelDAOImpl();
-//            Channel channel1 = channelDAO1.get(1);
-//            messageDAO.getList(channel, 100, 0);
-//            <channel>smscru</channel>
-//            <channel-queue>smscru</channel-queue>
-//            <host>localhost</host>
-//            <send-port>2775</send-port>
-//            <receive-port>2775</receive-port>
-//            <bind-mode>t</bind-mode>
-//            <enable-payload>false</enable-payload>
-//            <address-range>0006543</address-range>
-//            <username>smppclient1</username>
-//            <password>password</password>
-//            <source-addr>0006543</source-addr>
-//            <source-addr-ton>5</source-addr-ton>
-//            <source-addr-npi>1</source-addr-npi>
-//            <dest-addr-ton>1</dest-addr-ton>
-//            <dest-addr-npi>1</dest-addr-npi>
-//            <system-type>MCON1\,SINGLE</system-type>
-//            <recconnect-timeout>30</recconnect-timeout>
-//            <max-message>12</max-message>
-//            <message-per-second>100</message-per-second>
-//            <enquire-link-interval>10</enquire-link-interval>
-//            <wait-resend-timeout>5</wait-resend-timeout>
-//            <is-fake-channel>false</is-fake-channel>
-
-//            Channel channel = new Channel();
-//            channel.setName("smscru");
-//            channel.setQueueName("smscru");
-//            channel.setSmppHost("localhost");
-//            channel.setSmppPort(2775);
-//            channel.setPayload(false);
-//            channel.setSmppUserName("smppclient1");
-//            channel.setSmppPassword("password");
-//            channel.setSmppSourceAddr("0006543");
-//            channel.setSmppSourceTon(5);
-//            channel.setSmppDestNpi(1);
-//            channel.setSmppDestTon(1);
-//            channel.setSmppDestNpi(1);
-//            channel.setSmppSystemType("MCON1\\,SINGLE");
-//            channel.setSmppReconnectTimeOut(10);
-//            channel.setSmppEnquireLinkInterval(20);
-//            channel.setSmppMaxMessagePerSecond(20);
-//            channle.setSmppMaxSplitMessage(12);
-//            channel.setFake(false);
-//            channel.setEnable(true);
-//            channelDAO.create(channel);
-
-
-//            channel = channelDAO.get(1);
-//            Message message = new Message();
-//            String test = "test";
-//            message.setTo("79062783751");
-//            message.setMessageData(test.getBytes());
-//            message.setSequenceNumber(1);
-//            message.setPayload(false);
-//            messageDAO.create(message, channel);
-//            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-//            session.beginTransaction();
-//            Message message = new Message();
-//            String test = "test";
-//            message.setMessageData(test.getBytes());
-//            message.setTo("79062783751");
-//            message.setMessageStatus("NEEDSEND");
-//            message.setSequenceNumber(1);
-//            session.save(message);
-//            User user =  (User) session.get(User.class, 2);
-//            for (Channel channel:user.getChannels()) {
-//                System.out.println(channel.getName());
-//            }
-//            Channel channel = new Channel();
-//            channel.setName("testchannel");
-//            session.save(channel);
-//            Channel channel1 = new Channel();
-//            channel.setName("testchannel1");
-//            session.save(channel);
-//            User user = new User();
-//            user.setLogin("test1");
-//            user.setPassword(BCrypt.hashpw("password", BCrypt.gensalt()));
-//            Set<Channel> channels = new HashSet<>();
-//            channels.add(channel);
-//            channels.add(channel1);
-//            user.setChannels(channels);
-//            session.save(user);
-//            session.getTransaction().commit();
-//            redisClient = new RedisClient(globalConfig);
-//            SharedConfig.setRedisClient(redisClient);
-//            RabbitMqOldMessageWatcher rabbitMqOldMessageWatcher = new RabbitMqOldMessageWatcher(globalConfig);
-//            rabbitMqOldMessageWatcher.start();
-//
-
+            //Start all smpp server
             ChannelDAOImpl channelDAO = new ChannelDAOImpl();
             for (Object obj: channelDAO.getAllEnableList()) {
                 AsyncSmsServer asyncSmsServer = new AsyncSmsServer(globalConfig, ((Channel) obj));
@@ -245,8 +130,11 @@ public class Main implements Daemon {
 //                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //            }
 
-        }  catch (JedisDataException | JedisConnectionException e) {
+        }  catch (DatabaseError e) {
             logger.error(e.toString());
+            exit(0);
+        }  catch (Exception e) {
+            logger.error("unknow error " + e.toString());
             exit(0);
         }
 

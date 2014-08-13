@@ -1,83 +1,64 @@
-= render 'breadcrumb'
 
-.row
-  .col-lg-12
-    = link_to channels_messages_new_path(@channel), class: "btn btn-primary" do
-      Create message
+= paginate @messages
 
-.row
-  .col-lg-12
-    = paginate @messages
+%table.table.table-hover
+  %thead
+    %th
+      id
+    %th
+      status
+    %th
+      message_id
+    %th
+      addr_from
+    %th
+      addr_to
+    %th
+      message_data
+    %th
+      send_retry
+    %th
+      error_code
 
-    %table.table.table-hover
-      %thead
-        %th
-          id
-        %th
-          status
-        %th
-          message_id
-        %th
-          addr_from
-        %th
-          addr_to
-        %th
-          message_data
-        %th
-          is_payload
-        %th
-          sequence_number
-        %th
-          esm_class
-        %th
-          send_retry
-
-      %tbody.channel_message
-        - @messages.each do |message|
-          %tr
-            %td
-              = link_to message.id, channels_messages_show_path(message.channel, message)
-            %td
-              - case message.message_status.name
-                - when "SUCCESS"
-                  %span.label.label-success
-                    = message.message_status.name
-                - when "FAIL"
-                  %span.label.label-danger
-                    = message.message_status.name
-                - else
-                  %span.label.label-info
-                    = message.message_status.name
-            %td
-              = link_to message.message_id, "#"
-            %td
-              - if message.addr_from
-                = message.addr_from
-              - else
-                = message.channel.smpp_source_addr
-            %td
-              = message.addr_to
-            %td
-              - if message.is_payload
-                = message.get_utf_message_data
-              - else
-                %span.label.label-info
-                  = message.get_utf_message_data[0]
-                &nbsp;
-                = message.get_utf_message_data[1]
-            %td
-              - if message.is_payload
-                %span.label.label-success
-                  YES
-              - else
-                %span.label.label-default
-                  NO
-            %td
+  %tbody.channel_message
+    - @messages.each do |message|
+      %tr
+        %td
+          = link_to message.id, channels_messages_show_path(message.channel, message)
+        %td
+          = message_status_label_tag(message.message_status.name)
+        %td
+          = link_to message.message_id, "#"
+        %td
+          - if message.addr_from
+            = message.addr_from
+          - else
+            = message.channel.smpp_source_addr
+        %td
+          = message.addr_to
+        %td.message-data
+          .header
+            .first-item
+              seq_num:
               = message.sequence_number
-            %td
+            .item
+              esm_class:
               = message.esm_class
-            %td
-              = message.send_retry
+            .item
+              is_playload:
+              = yes_no_label_tag(message.is_payload)
+          .data
+            - if message.is_payload or message.esm_class == 0
+              = message.get_utf_message_data
+            - else
+              %span.label.label-info
+                = message.get_utf_message_data[0]
+              &nbsp;
+              = message.get_utf_message_data[1]
+        %td
+          = message.send_retry
+        %td
+          = message.error_code
 
 
-    = paginate @messages
+= paginate @messages

@@ -20,7 +20,7 @@ public class GlobalConfig {
     private int    rabbitPort;
     private String rabbitVhost;
     private String rabbitQueueMessageOld;
-    private String rabbitQueueMessage;
+    private String rabbitQueuePrefix;
     private String rabbitQueueInternalMessage;
     private int rabbitConnectTimeOut;
     private String rabbitUser;
@@ -55,7 +55,7 @@ public class GlobalConfig {
         setRabbitPort(xml_config.getInt("rabbit-port", 5672));
         setRabbitVhost(xml_config.getString("rabbit-vhost", "/smsserver"));
         setRabbitQueueMessageOld(xml_config.getString("rabbit-queue-message-old", "message-old"));
-        setRabbitQueueMessage(xml_config.getString("rabbit-queue-message", "smsserver-message"));
+        setRabbitQueuePrefix(xml_config.getString("rabbit-queue-prefix", "smsserver-message-"));
         setRabbitQueueInternalMessage(xml_config.getString("rabbit-queue-internal-message", "smsserver-raw-message"));
         setRabbitConnectTimeOut(xml_config.getInt("rabbit-connect-timeout", 10));
         setRabbitUser(xml_config.getString("rabbit-user", "guest"));
@@ -238,12 +238,12 @@ public class GlobalConfig {
         this.rabbitQueueInternalMessage = rabbitQueueInternalMessage;
     }
 
-    public String getRabbitQueueMessage() {
-        return rabbitQueueMessage;
+    public String getRabbitQueuePrefix() {
+        return rabbitQueuePrefix;
     }
 
-    public void setRabbitQueueMessage(String rabbitQueueMessage) {
-        this.rabbitQueueMessage = rabbitQueueMessage;
+    public void setRabbitQueuePrefix(String rabbitQueuePrefix) {
+        this.rabbitQueuePrefix = rabbitQueuePrefix;
     }
 
     public int getRabbitConnectTimeOut() {

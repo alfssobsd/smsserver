@@ -1,0 +1,19 @@
+-# fix chrome autcomlpleate=off
+= text_field_tag :prevent_autofill, "", style: "display:none;"
+= password_field_tag :password_fake, "",  style: "display:none;"
+
+.form-group
+  = f.label "Email"
+  = f.text_field :email, class: "form-control", placeholder: "email", autofocus: true, required: true, autocomplete: "off"
+
+.form-group
+  = f.label :password
+  = f.password_field :password, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.label :password_confirmation
+  = f.password_field :password_confirmation, class: "form-control", autocomplete: "off"
+
+.form-group
+  = f.check_box :is_admin
+  = f.label :is_admin

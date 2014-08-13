@@ -6,7 +6,7 @@
 
     <groupId>smsserver</groupId>
     <artifactId>smsserver</artifactId>
-    <version>0.5</version>
+    <version>1.0</version>
 
 
     <properties>

@@ -1,0 +1,19 @@
+%h3
+  Members
+
+= render :partial => 'admin/channels/members/add_members'
+
+- if not @memberships_channel.empty?
+  - @memberships_channel.each do |membership|
+    .row{style:'padding-top:5px;'}
+      .col-lg-1
+        = user_avatar(membership.member, {size:48})
+      .col-lg-5
+        = membership.channel_permission_type.name
+        %br
+        = membership.member.email
+      .col-lg-2
+        = link_to "remove", admin_channels_members_destroy_path(@channel, membership.member), :class => "btn btn-danger", method: :delete,  data: { confirm: "remove memeber #{membership.member.email}?" }
+- else
+  %p{style:'padding-top:5px;'}
+    no members

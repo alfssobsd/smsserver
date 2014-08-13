@@ -21,3 +21,8 @@
 
 en:
   hello: "Hello world"
+
+  messages:
+    notify:
+      send:
+        success: "Success send message"

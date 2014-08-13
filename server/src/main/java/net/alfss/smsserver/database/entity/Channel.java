@@ -67,7 +67,7 @@ public class Channel {
     private boolean payload = false;
 
     @Column(name="is_fake")
-    private Boolean fake;
+    private Boolean isFake;
 
     @Column(name="is_enable")
     private Boolean enable = true;
@@ -187,6 +187,10 @@ public class Channel {
         return smppReconnectTimeOut;
     }
 
+    public int getSmppReconnectTimeOutInMs() {
+        return smppReconnectTimeOut * 1000;
+    }
+
     public void setSmppReconnectTimeOut(int smppReconnectTimeOut) {
         this.smppReconnectTimeOut = smppReconnectTimeOut;
     }
@@ -199,12 +203,12 @@ public class Channel {
         this.smppEnquireLinkInterval = smppEnquireLinkInterval;
     }
 
-    public Boolean getFake() {
-        return fake;
+    public Boolean isFake() {
+        return isFake;
     }
 
-    public void setFake(Boolean fake) {
-        this.fake = fake;
+    public void setIsFake(Boolean isFake) {
+        this.isFake = isFake;
     }
 
     public Boolean getEnable() {

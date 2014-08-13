@@ -1,0 +1,21 @@
+- if @channel.errors.full_messages.any?
+  .alert.alert-warning.alert-dismissable
+    %ul
+      - @channel.errors.full_messages.each do |msg|
+        %li
+          = msg
+
+.col-lg-5
+  = form_for :channel, url: admin_channels_update_path(@channel), method: :put  do |f|
+    = render :partial => "form", :locals => { :f => f }
+    = f.submit 'Update', :class => "btn btn-primary"
+
+.col-lg-7
+  = render :partial => 'admin/channels/connections/list'
+  = render :partial => 'admin/channels/members/list'
+
+
+:javascript
+  $(document).ready( function() {
+    $("[type='checkbox']").bootstrapSwitch();
+  });

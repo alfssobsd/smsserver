@@ -1,0 +1,18 @@
+%h3
+  Connections
+
+.row
+  .col-lg-12
+    - @channel.channel_connections.all.each_with_index do |item, i|
+      .channel-connect{style: "padding-bottom:5px;"}
+        = form_for :channel_connections, url: admin_channels_connections_update_path(@channel, item) , method: :put, html:{class: "form-inline"}  do |f|
+          .form-group
+            = i+1
+            \.
+            = f.text_field :smpp_system_type, placeholder:'system-type', class:'form-control', value: item.smpp_system_type
+          = f.submit 'update', :class => "btn btn-primary"
+          = link_to "delete", admin_channels_connections_destroy_path(@channel, item), :class => "btn btn-danger", method: :delete,  data: { confirm: "delete connection?" }
+
+.row{style: 'padding-bottom:5px;'}
+  .col-lg-offset-1.col-lg-12
+    = link_to "+ Create new connection", admin_channels_connections_create_path(@channel), :class => "btn btn-primary", method: :post

@@ -87,6 +87,9 @@ public class MessageDAOImpl implements MessageDAO {
             Message message = (Message) queryCriteria.list().get(0);
             session.getTransaction().commit();
             return  message;
+        } catch (IndexOutOfBoundsException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -94,7 +97,7 @@ public class MessageDAOImpl implements MessageDAO {
     }
 
     @Override
-    public Message getWaiteDelivery(int messageSmsId, String queue) {
+    public Message getWaiteDelivery(String messageSmsId, String queue) {
         MessageStatus messageStatus = statusDAO.getByName("WAITING_DELIVERY");
         Session session = getSession();
         try {
@@ -107,6 +110,9 @@ public class MessageDAOImpl implements MessageDAO {
             Message message = (Message) queryCriteria.list().get(0);
             session.getTransaction().commit();
             return message;
+        } catch (IndexOutOfBoundsException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -114,7 +120,7 @@ public class MessageDAOImpl implements MessageDAO {
     }
 
     @Override
-    public Message getWaiteDelivery(int messageSmsId, Channel channel) {
+    public Message getWaiteDelivery(String messageSmsId, Channel channel) {
         return getWaiteDelivery(messageSmsId, channel.getQueueName());
     }
 
@@ -125,6 +131,7 @@ public class MessageDAOImpl implements MessageDAO {
         try {
             session.beginTransaction();
             message.setMessageStatus(messageStatus);
+            session.update(message);
             session.getTransaction().commit();
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();

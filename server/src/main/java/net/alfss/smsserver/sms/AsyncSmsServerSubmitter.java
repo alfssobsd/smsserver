@@ -5,8 +5,10 @@ import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.database.dao.impl.MessageDAOImpl;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.entity.Message;
+import net.alfss.smsserver.database.exceptions.DatabaseError;
+import net.alfss.smsserver.rabbit.exceptions.RabbitMqException;
 import net.alfss.smsserver.rabbit.exceptions.RabbitMqQueueConnectException;
-import net.alfss.smsserver.rabbit.queue.QueueSend;
+import net.alfss.smsserver.rabbit.queue.QueueDirectSend;
 import net.alfss.smsserver.sms.exceptions.SmsDestinationAddressWrongLength;
 import net.alfss.smsserver.sms.exceptions.SmsServerConnectionException;
 import net.alfss.smsserver.sms.exceptions.SmsServerException;
@@ -33,15 +35,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 13:13
  */
 public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
-    private final QueueSend sendQueue;
+    private final QueueDirectSend sendQueue;
     private final MessageDAOImpl messageDAO;
 
     public AsyncSmsServerSubmitter(GlobalConfig config, Channel channel, SmsServerConnectPool connectPool, RateLimiter rateLimiter, AtomicInteger seqNumber) {
         super(config, channel, connectPool, rateLimiter, seqNumber);
         this.messageDAO = new MessageDAOImpl();
-        this.sendQueue = new QueueSend(config, channel.getName() + "-send", channel.getName() + "-send", true);
+        this.sendQueue = new QueueDirectSend(config, channel, true);
     }
 
+    //TODO: нужно заюзать rateLimiter
     @Override
     public void run() {
         setRunning(true);
@@ -51,8 +54,12 @@ public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
                 waitMessage();
             } catch (SmsServerException e) {
                 errorMessage("error Invalidated object", e);
-            } catch (RabbitMqQueueConnectException e) {
-                errorMessage("error connect to RabbitMQ", e);
+                waitRecconectSmpp();
+            } catch (RabbitMqQueueConnectException | RabbitMqException e) {
+                waitRecconectRabbitMq(sendQueue);
+            } catch (DatabaseError e) {
+                errorMessage("error ", e);
+                waitRecconectDatabase();
             } catch (NullPointerException e) {
                 debugMessage("NullPointerException", e);
             } catch (Exception e) {
@@ -66,7 +73,6 @@ public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
         int id = Integer.parseInt(sendQueue.getNextMessage());
         Message message = messageDAO.get(id);
         message.setSequenceNumber(seqNumber.incrementAndGet());
-        messageDAO.setStatusWaitResponse(message);
 
         SubmitSM request = null;
 
@@ -82,8 +88,11 @@ public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
                 submit(request);
                 connectPool.returnResource(session);
             }
+            messageDAO.setStatusWaitResponse(message);
         } catch (SmsServerException e) {
             errorMessage("error connect to smpp", e);
+            errorMessage("retrun message id = " +  message.getMessageId() + " to queue");
+            sendQueue.publish(String.valueOf(message.getMessageId()));
             connectPool.returnBrokenResource(session);
         }
 
