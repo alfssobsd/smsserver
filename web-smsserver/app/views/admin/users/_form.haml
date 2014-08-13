@@ -7,6 +7,10 @@
   = f.text_field :email, class: "form-control", placeholder: "email", autofocus: true, required: true, autocomplete: "off"
 
 .form-group
+  = f.label "User Name"
+  = f.text_field :username, class: "form-control", placeholder: "username", required: true, autocomplete: "off"
+
+.form-group
   = f.label :password
   = f.password_field :password, class: "form-control", autocomplete: "off"
 

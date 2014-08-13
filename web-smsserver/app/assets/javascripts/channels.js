@@ -25,7 +25,7 @@ function suggestUser() {
                 return {
                     results: $.map(data, function (item) {
                         return {
-                            text: item.email,
+                            text: item.username,
                             slug: 'test1',
                             id: item.id
                         }

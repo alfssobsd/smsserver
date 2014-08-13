@@ -47,7 +47,7 @@ class Admin::UsersController < Admin::BaseController
   protected
 
   def user_params(is_update)
-    tmp_params = params.require(:user).permit(:email, :password, :password_confirmation, :is_admin)
+    tmp_params = params.require(:user).permit(:email, :password, :password_confirmation, :is_admin, :username)
     if is_update and tmp_params[:password].blank?
       tmp_params.delete(:password)
       tmp_params.delete(:password_confirmation) if tmp_params[:password_confirmation].blank?

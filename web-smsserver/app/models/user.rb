@@ -3,10 +3,19 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
 
-  before_create :generate_token
-
   has_many :memberships, foreign_key: :member_id
   has_many :channels, :through =>  :memberships, :class_name => Channel, :source => :channel
+
+  attr_accessor :login
+
+  before_create :generate_token
+
+  validates :username,  presence: true,
+            :format => {:with => /\A[a-z0-9\-\_]+\z/i},
+            length: {minimum: 3, maximum: 254},
+            :uniqueness => {
+                :case_sensitive => false
+            }
 
   class << self
     def get_user_by_token(token)
@@ -15,6 +24,15 @@ class User < ActiveRecord::Base
         User.find_by_token(token)
       rescue ActiveRecord::RecordNotFound
         return nil
+      end
+    end
+
+    def find_for_database_authentication(warden_conditions)
+      conditions = warden_conditions.dup
+      if login = conditions.delete(:login)
+        where(conditions).where(["lower(username) = :value OR lower(email) = :value", { :value => login.downcase }]).first
+      else
+        where(conditions).first
       end
     end
   end
@@ -28,6 +46,14 @@ class User < ActiveRecord::Base
       return memberships.where(channel:channel, channel_permission_types: {name: permission_type_name}).first
     end
     memberships.where(channel: channel).first
+  end
+
+  def login=(login)
+    @login = login
+  end
+
+  def login
+    @login || self.username || self.email
   end
 
 end
