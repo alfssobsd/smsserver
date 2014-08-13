@@ -44,7 +44,6 @@ public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
         this.sendQueue = new QueueDirectSend(config, channel, true);
     }
 
-    //TODO: нужно заюзать rateLimiter
     @Override
     public void run() {
         setRunning(true);
@@ -52,6 +51,7 @@ public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
         do {
             try {
                 waitMessage();
+                rateLimiter.acquire();
             } catch (SmsServerException e) {
                 errorMessage("error Invalidated object", e);
                 waitRecconectSmpp();

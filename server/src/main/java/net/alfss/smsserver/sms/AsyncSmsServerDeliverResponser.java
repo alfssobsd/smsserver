@@ -46,6 +46,7 @@ public class AsyncSmsServerDeliverResponser extends AsyncSmsServerChild {
         do {
             try {
                 waitResponseMessage();
+                rateLimiter.acquire();
             } catch (SmsServerException e) {
                 errorMessage("unknow error", e);
                 waitRecconectSmpp();
