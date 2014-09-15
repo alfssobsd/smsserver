@@ -40,6 +40,14 @@ class Channel < ActiveRecord::Base
     where(is_enable: false).load
   end
 
+  def self.search(search, page)
+    if search
+      where('name ILIKE ? or queue_name ILIKE ?', "%#{search}%", "%#{search}%").page page
+    else
+      page page
+    end
+  end
+
   private
 
   def create_channel_connection

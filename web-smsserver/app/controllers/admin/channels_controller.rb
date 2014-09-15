@@ -3,7 +3,7 @@ class Admin::ChannelsController < Admin::BaseController
   before_filter :find_members, only: [:edit, :update]
 
   def list
-    @channels = Channel.all
+    @channels = Channel.search(params[:search], params[:page])
   end
 
   def new

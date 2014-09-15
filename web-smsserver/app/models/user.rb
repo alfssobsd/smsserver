@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :omniauth_providers => [:ldap]
 
   has_many :memberships, foreign_key: :member_id
   has_many :channels, :through =>  :memberships, :class_name => Channel, :source => :channel
@@ -16,6 +16,8 @@ class User < ActiveRecord::Base
             :uniqueness => {
                 :case_sensitive => false
             }
+
+  scope :user_search, -> { order(is_admin: :desc) }
 
   class << self
     def get_user_by_token(token)
@@ -33,6 +35,14 @@ class User < ActiveRecord::Base
         where(conditions).where(["lower(username) = :value OR lower(email) = :value", { :value => login.downcase }]).first
       else
         where(conditions).first
+      end
+    end
+
+    def search(search, page)
+      if search
+        user_search.where('username ILIKE ? or email ILIKE ?', "%#{search}%", "%#{search}%").page page
+      else
+        user_search.page page
       end
     end
   end

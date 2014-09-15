@@ -3,11 +3,14 @@
   %head
     = stylesheet_link_tag "application", media: :all
     = javascript_include_tag "application"
+    = favicon_link_tag
     = csrf_meta_tags
-  %body
-    - flash.each do |name, msg|
-      %div{class: flash_class(name) }
-        %button.close{type: "button", "data-dismiss" => "alert", "aria-hidden" => "true"}
-          &times;
-        = msg
-    = content_for?(:content) ? yield(:content) : yield
+  %body.signin-container
+    .container
+      .signin-message
+        - flash.each do |name, msg|
+          %div{class: flash_class(name) }
+            %button.close{type: "button", "data-dismiss" => "alert", "aria-hidden" => "true"}
+              &times;
+            = msg
+      = content_for?(:content) ? yield(:content) : yield

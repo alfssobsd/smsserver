@@ -1,3 +1,13 @@
+= form_tag channels_path, method: :get, class: "form-inline" do
+  .form-group
+    = text_field_tag :search, params[:search], class: "form-control", placeholder: "name or queue"
+  = button_tag name: nil, class:"btn btn-default btn-primary" do
+    %span.glyphicon.glyphicon-search
+    Search
+  = link_to admin_channels_list_path, class:"btn btn-default" do
+    %span.glyphicon.glyphicon-refresh
+    Clear
+
 %table.table.table-hover
   %thead
     %th

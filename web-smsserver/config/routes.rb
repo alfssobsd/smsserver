@@ -1,14 +1,18 @@
 WebSmsserver::Application.routes.draw do
-  devise_for :users, controllers: { registrations: 'users/registrations',
-                                    sessions: 'users/sessions',
-                                    passwords: 'users/passwords',
-                                    unlocks: 'users/unlocks'}
+
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
   root to: redirect('/channels')
+
+  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks",
+                                    registrations: 'users/registrations',
+                                    sessions: 'users/sessions',
+                                    passwords: 'users/passwords',
+                                    unlocks: 'users/unlocks'}
 
   get 'channels' => 'channel#index', as: :channels
   get "channels/:channel_id/messages", to: redirect('channels/%{channel_id}/messages/list/1'), as: :channels_messages_index

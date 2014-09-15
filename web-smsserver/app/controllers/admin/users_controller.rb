@@ -2,7 +2,7 @@ class Admin::UsersController < Admin::BaseController
   before_filter :find_user, only: [:edit, :update, :destroy]
 
   def list
-    @users = User.all
+    @users = User.search(params[:search], params[:page])
   end
 
   def show

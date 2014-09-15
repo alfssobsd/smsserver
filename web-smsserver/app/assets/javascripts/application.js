@@ -15,5 +15,6 @@
 //= require bootstrap-switch
 //= require select2
 //= require channels
+//= require bootstrap/tab
 
 

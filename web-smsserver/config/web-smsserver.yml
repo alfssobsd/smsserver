@@ -1,4 +1,18 @@
-rabbitmq:
-  uri: amqp://guest:guest@10.211.55.3:5672
-  queue_prefix: smsserver-message-
-  connect_timeout: 10
+production: &base
+  gravatar_enable: true
+  rabbitmq:
+    uri: amqp://guest:guest@10.211.55.3:5672
+    queue_prefix: smsserver-message-
+    connect_timeout: 10
+
+  ldap:
+    enabled: true
+    host: ldap.domain.ru
+    base: ou=people,dc=domain,dc=ru
+    port: 389
+    bind_dn: cn=user,dc=domain,dc=ru
+    password: password
+    uid: uid
+
+development:
+  <<: *base

@@ -2,8 +2,9 @@ class RabbitSms
   attr_accessor :uri, :queue_prefix, :connect_timeout, :conn, :exchange
 
   def initialize
-    self.uri = SMS_SERVER_CONF[:rabbitmq][:uri]
-    self.queue_prefix = SMS_SERVER_CONF[:rabbitmq][:queue_prefix]
+    self.uri = Settings.rabbitmq.uri
+    self.queue_prefix = Settings.rabbitmq.queue_prefix
+    self.connect_timeout = Settings.rabbitmq.connect_timeout
   end
 
   def create_sms(inbound_message)

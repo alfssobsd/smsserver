@@ -1,7 +1,20 @@
+= form_tag admin_users_list_path, method: :get, class: "form-inline" do
+  .form-group
+    = text_field_tag :search, params[:search], class: "form-control", placeholder: "email or username"
+  = button_tag name: nil, class:"btn btn-default btn-primary" do
+    %span.glyphicon.glyphicon-search
+    Search
+  = link_to admin_users_list_path, class:"btn btn-default" do
+    %span.glyphicon.glyphicon-refresh
+    Clear
+
+-#= User.attribute_names
 %table.table
   %thead
     %th
 
+    %th
+      username
     %th
       email
     %th
@@ -15,6 +28,8 @@
         %td
           = user_avatar(user)
         %td
+          = link_to user.username, admin_users_edit_path(user)
+        %td
           = link_to user.email, admin_users_edit_path(user)
         %td
           - if user.is_admin?
@@ -22,11 +37,13 @@
         %td
           = user.token
 
+= paginate @users
 
-  -#= user_avatar(user)
-  -#= link_to user.email, admin_users_edit_path(user)
-  -#= user.token
-  -#= user.is_admin?
-  -#= user.updated_at
-  -#= link_to 'Delete', admin_users_destroy_path(user), method: :delete, data: { confirm: "are you delete user: " + user.email }
-  -#%br
+
+-#= user_avatar(user)
+-#= link_to user.email, admin_users_edit_path(user)
+-#= user.token
+-#= user.is_admin?
+-#= user.updated_at
+-#= link_to 'Delete', admin_users_destroy_path(user), method: :delete, data: { confirm: "are you delete user: " + user.email }
+-#%br

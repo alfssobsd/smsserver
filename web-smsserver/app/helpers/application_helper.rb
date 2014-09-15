@@ -23,8 +23,14 @@ module ApplicationHelper
   end
 
   def user_avatar(user, options = {})
-    image = get_gravatar(user.email, options)
-    image_tag image, size: "#{options[:size]}x#{options[:size]}", :alt => "Avatar" if image.present?
+    if Settings.gravatar_enable
+      image = get_gravatar(user.email, options)
+      image_tag image, size: "#{options[:size]}x#{options[:size]}", :alt => "Avatar" if image.present?
+    else
+      size = 16
+      size = options[:size] - 16 if options[:size]
+      ('<span style="font-size:' + size.to_s + 'px;" class="glyphicon glyphicon-user"><span>').html_safe
+    end
   end
 
   def get_gravatar(email, options = {})

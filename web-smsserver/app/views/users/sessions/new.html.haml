@@ -1,0 +1,41 @@
+.signin-tab
+  %ul.nav.nav-tabs{role:"tablist", id:"login-tab", "data-ldap-enable" => "#{Settings.ldap.enabled}" }
+    %li
+      = link_to "#standart", role: "tab", "data-toggle" => "tab" do
+        Standart
+    %li
+      = link_to "#ldap", role: "tab", "data-toggle" => "tab" do
+        Ldap
+  .tab-content
+    .tab-pane.fade{id: "ldap"}
+      = form_tag(user_omniauth_callback_path(:ldap), id: 'new_ldap_user', class:"signin-form" ) do
+        %h2
+          Please sign in
+        = text_field_tag :username, nil, {class: "form-control", placeholder: "LDAP Login", autofocus: "autofocus"}
+        = password_field_tag :password, nil, {class: "form-control", placeholder: "Password"}
+        %br
+        = button_tag "LDAP Sign in", class: "btn btn-lg btn-primary btn-block"
+
+    .tab-pane.fade{id: "standart"}
+      = form_for(resource, as: resource_name, url: session_path(resource_name), html:{ class: "signin-form"}) do |f|
+        %h2
+          Please sign in
+        = f.text_field :login, autofocus: true, class: "form-control", placeholder: "Login name"
+        = f.password_field :password, autocomplete: "off", class: "form-control", placeholder: "Password"
+        - if devise_mapping.rememberable?
+          = f.check_box :remember_me
+          = f.label :remember_me
+
+        = f.button "Sign in", class: "btn btn-lg btn-primary btn-block"
+        = render "users/shared/links"
+
+
+:javascript
+  $(document).ready( function() {
+    var enable_ldap = $('#login-tab').data('ldap-enable')
+    if  (enable_ldap) {
+      $('#login-tab a:last').tab('show')
+    } else {
+      $('#login-tab a:first').tab('show')
+    }
+  });
