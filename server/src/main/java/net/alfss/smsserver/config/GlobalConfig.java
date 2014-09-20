@@ -33,6 +33,7 @@ public class GlobalConfig {
     private String redisPassword;
     private int redisDatabase;
     //jetty
+    private String jettyHttpToken;
     private int jettyPort;
     private String jettyAddress;
     private int jettyMinPool;
@@ -68,6 +69,7 @@ public class GlobalConfig {
         setRedisPort(xml_config.getInt("redis-port", 6379));
         setRedisDatabase(xml_config.getInt("redis-db", 0));
         //jetty
+        setJettyHttpToken(xml_config.getString("http-token", "token_not_set"));
         setJettyAddress(xml_config.getString("http-address", "0.0.0.0"));
         setJettyPort(xml_config.getInt("http-port", 8080));
         setJettyMinPool(xml_config.getInt("http-min-pool", 1));
@@ -284,5 +286,13 @@ public class GlobalConfig {
 
     public void setDbUrl(String dbUrl) {
         this.dbUrl = dbUrl;
+    }
+
+    public String getJettyHttpToken() {
+        return jettyHttpToken;
+    }
+
+    public void setJettyHttpToken(String jettyHttpToken) {
+        this.jettyHttpToken = jettyHttpToken;
     }
 }

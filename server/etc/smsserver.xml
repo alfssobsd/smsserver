@@ -16,10 +16,11 @@
     <rabbit-password>guest</rabbit-password>
     <!--http -->
     <http-address>0.0.0.0</http-address>
-    <http-port>8082</http-port>
+    <http-port>8080</http-port>
     <http-min-pool>10</http-min-pool>
     <http-max-pool>20</http-max-pool>
     <http-out-buffer>32768</http-out-buffer>
     <http-req-header>8192</http-req-header>
     <http-res-header>8192</http-res-header>
+    <http-token>de50de9f7c8482df0ea4aecf69906d1f</http-token>
 </configuration>

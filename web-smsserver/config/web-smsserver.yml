@@ -1,5 +1,6 @@
 production: &base
   gravatar_enable: true
+  smsserver_http_token: de50de9f7c8482df0ea4aecf69906d1f
   rabbitmq:
     uri: amqp://guest:guest@10.211.55.3:5672
     queue_prefix: smsserver-message-
