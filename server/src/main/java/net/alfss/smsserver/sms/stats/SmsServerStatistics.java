@@ -1,4 +1,4 @@
-package net.alfss.smsserver.stats;
+package net.alfss.smsserver.sms.stats;
 
 /**
  * User: alfss
