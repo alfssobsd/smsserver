@@ -25,16 +25,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Date: 27.06.14
  * Time: 20:51
  */
-public class AsyncSmsServerDeliverResponser extends AsyncSmsServerChild {
+public class SmsServerDeliverResponser extends AsyncSmsServerChild {
     private final MessageDAOImpl messageDAO;
     private final QueueDirectResponse responseQueue;
 
-    public AsyncSmsServerDeliverResponser(GlobalConfig config,
-                                          Channel channel,
-                                          SmsServerConnectPool connectPool,
-                                          RateLimiter rateLimiter,
-                                          AtomicInteger seqNumber) {
-        super(config, channel, connectPool, rateLimiter, seqNumber);
+    public SmsServerDeliverResponser(GlobalConfig config,
+                                     Channel channel,
+                                     SmsServerConnectPool connectPool,
+                                     int numberConnection,
+                                     RateLimiter rateLimiter,
+                                     AtomicInteger seqNumber) {
+        super(config, channel, connectPool, numberConnection, rateLimiter, seqNumber);
         this.responseQueue = new QueueDirectResponse(config, channel, true);
         this.messageDAO = new MessageDAOImpl();
     }
@@ -47,6 +48,10 @@ public class AsyncSmsServerDeliverResponser extends AsyncSmsServerChild {
             try {
                 waitResponseMessage();
                 rateLimiter.acquire();
+                errorMessage(String.valueOf(isInterrupted()));
+            } catch (InterruptedException e) {
+                debugMessage("Interrupted");
+                setRunning(false);
             } catch (SmsServerException e) {
                 errorMessage("unknow error", e);
                 waitRecconectSmpp();
@@ -61,9 +66,9 @@ public class AsyncSmsServerDeliverResponser extends AsyncSmsServerChild {
             } catch (Exception e) {
                 debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
             }
-        } while (isRunning() & !isInterrupted());
+        } while (isRunning());
 
-        errorMessage("Interrupted");
+        errorMessage("stop (channel = " + channel.getName() + ")");
     }
 
     private void waitResponseMessage() throws InterruptedException {

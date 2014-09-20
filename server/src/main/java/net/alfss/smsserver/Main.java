@@ -1,12 +1,7 @@
 package net.alfss.smsserver;
 
 import net.alfss.smsserver.config.GlobalConfig;
-import net.alfss.smsserver.database.dao.impl.ChannelDAOImpl;
-import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.exceptions.DatabaseError;
-import net.alfss.smsserver.http.WebServer;
-import net.alfss.smsserver.redis.RedisClient;
-import net.alfss.smsserver.sms.AsyncSmsServer;
 import org.apache.commons.cli.*;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -31,9 +26,7 @@ import static java.lang.System.exit;
 
 public class Main implements Daemon {
 
-    private WebServer server;
     private String [] arguments;
-    private RedisClient redisClient = null;
     private GlobalConfig globalConfig = null;
     final Logger logger = (Logger) LoggerFactory.getLogger(Main.class);
 
@@ -51,13 +44,11 @@ public class Main implements Daemon {
     private void startDaemon(String[] args) {
 
         String configFile = "/etc/smsserver/smsserver.xml";
-        String rabbitmqClientMessage = null;
 
         Options opt = new Options();
         opt.addOption("h", false, "print help");
         opt.addOption("v", false, "print version");
         opt.addOption("c", true, "config file");
-        opt.addOption("cr", true, "rabbitmq send message");
         BasicParser parser = new BasicParser();
 
         try {
@@ -71,10 +62,6 @@ public class Main implements Daemon {
             if( cl.hasOption('v')) {
                 System.out.println("smsserver: " + getVersion());
                 exit(0);
-            }
-
-            if (cl.hasOption("cr")) {
-                rabbitmqClientMessage = cl.getOptionValue("cr");
             }
 
             if (cl.hasOption('c')) {
@@ -97,37 +84,26 @@ public class Main implements Daemon {
             exit(0);
         }
 
-        if (rabbitmqClientMessage != null) {
-            logger.error(MessageFormat.format("############# RabbitMq send message client {0} #############", rabbitmqClientMessage));
-            exit(0);
-        }
-
         logger.error(MessageFormat.format("############# Start smsserver {0} #############", getVersion()));
         try {
 
-            //Start all smpp server
-            ChannelDAOImpl channelDAO = new ChannelDAOImpl();
-            for (Object obj: channelDAO.getAllEnableList()) {
-                AsyncSmsServer asyncSmsServer = new AsyncSmsServer(globalConfig, ((Channel) obj));
-                asyncSmsServer.start();
-            }
-
-//            for (String channelName: globalConfig.getChannelList()) {
-//                if (!globalConfig.getChennelConfig(channelName).isFakeChannel()) {
-//                    AsyncSmsServer asyncSmsServer;
-//                    asyncSmsServer = new AsyncSmsServer(globalConfig.getChennelConfig(channelName), redisClient);
-//                    asyncSmsServer.start();
-//                }
-//            }
-
+            Master master = new Master(globalConfig);
+            master.run();
 //            server = new WebServer(globalConfig);
 //            try {
 //                server.start();
 //                server.join();
 //            } catch (InterruptedException e) {
-//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//                e.printStackTrace();
 //            } catch (Exception e) {
-//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//                e.printStackTrace();
+//            }
+
+            //Start all smpp server
+//            ChannelDAOImpl channelDAO = new ChannelDAOImpl();
+//            for (Object obj: channelDAO.getAllEnableList()) {
+//                AsyncSmsServerMaster asyncSmsServer = new AsyncSmsServerMaster(globalConfig, ((Channel) obj));
+//                asyncSmsServer.start();
 //            }
 
         }  catch (DatabaseError e) {

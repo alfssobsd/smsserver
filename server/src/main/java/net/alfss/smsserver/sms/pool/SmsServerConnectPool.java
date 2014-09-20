@@ -4,7 +4,7 @@ package net.alfss.smsserver.sms.pool;
 import net.alfss.smsserver.config.GlobalConfig;
 import net.alfss.smsserver.database.entity.Channel;
 import net.alfss.smsserver.database.entity.ChannelConnection;
-import net.alfss.smsserver.sms.AsyncSmsServerEventListener;
+import net.alfss.smsserver.sms.SmsServerEventListener;
 import net.alfss.smsserver.sms.exceptions.SmsServerConnectionException;
 import net.alfss.smsserver.sms.prototype.Pool;
 import org.apache.commons.pool2.BasePooledObjectFactory;
@@ -48,6 +48,7 @@ public class SmsServerConnectPool extends Pool<Session> {
         @Override
         public Session create() throws Exception {
             logger.error("SmsServerFactory: create connect to " + channel.getSmppHost() + " channel = " + channel.getName());
+            //TODO: SSLConnection, ssl keystore
             Connection conn = new TCPIPConnection(channel.getSmppHost(), channel.getSmppPort());
             conn.setReceiveTimeout(20 * 1000);
             Session session = new Session(conn);
@@ -56,7 +57,7 @@ public class SmsServerConnectPool extends Pool<Session> {
             bindRequest.setPassword(channel.getSmppPassword());
             bindRequest.setSystemType(channelConnection.getSmppSystemType());
             bindRequest.setAddressRange("");
-            AsyncSmsServerEventListener pduListener = new AsyncSmsServerEventListener(config, channel);
+            SmsServerEventListener pduListener = new SmsServerEventListener(config, channel);
             Response response = session.bind(bindRequest, pduListener);
             if(response.getCommandStatus() != Data.ESME_ROK) {
                 throw  new SmsServerConnectionException("Error connect STATUS = " + response.getCommandStatus());

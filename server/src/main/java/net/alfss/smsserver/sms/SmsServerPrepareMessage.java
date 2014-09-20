@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Date: 26.11.13
  * Time: 16:24
  */
-public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
+public class SmsServerPrepareMessage extends AsyncSmsServerChild {
 
     private final QueueDirectInbound inboundQueue;
     private final MessageDAOImpl messageDAO;
@@ -39,12 +39,13 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
     private byte uniqIdMessage = (byte) 0x00;
 
 
-    public AsyncSmsServerPrepareMessage(GlobalConfig config,
-                                        Channel channel,
-                                        SmsServerConnectPool connectPool,
-                                        RateLimiter rateLimiter,
-                                        AtomicInteger seqNumber) {
-        super(config, channel, connectPool, rateLimiter, seqNumber);
+    public SmsServerPrepareMessage(GlobalConfig config,
+                                   Channel channel,
+                                   SmsServerConnectPool connectPool,
+                                   int numberConnection,
+                                   RateLimiter rateLimiter,
+                                   AtomicInteger seqNumber) {
+        super(config, channel, connectPool, numberConnection, rateLimiter, seqNumber);
         this.inboundQueue = new QueueDirectInbound(config, channel, true);
         this.sendQueue = new QueueDirectSend(config, channel, false);
 
@@ -60,6 +61,9 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
         do {
             try {
                 processingMessage();
+            } catch (InterruptedException e) {
+               debugMessage("Interrupted");
+               setRunning(false);
             } catch (RabbitMqQueueConnectException | RabbitMqException e) {
                 waitRecconectRabbitMq(sendQueue);
             } catch (DatabaseError e) {
@@ -70,11 +74,13 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
             } catch (Exception e) {
                 debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
             }
-        } while (isRunning() & !isInterrupted());
+        } while (isRunning());
+
+        errorMessage("stop (channel = " + channel.getName() + ")");
     }
 
     //TODO:нужно возвращать в inboundQueue сообшения если есть проблемы!
-    private void processingMessage() {
+    private void processingMessage() throws InterruptedException {
 
         //get inboundMessage
         try {
@@ -82,6 +88,8 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
                 inboundMessage = inboundQueue.getNextMessage();
                 debugMessage("get InboundMessage (channel = " + channel.getName() + ")");
             }
+        } catch (InterruptedException e) {
+            throw new InterruptedException();
         } catch (RabbitMqQueueMappingException e ){
             errorMessage("error parse InboundMessage (channel = " + channel.getName() + ") ", e);
             inboundMessage = null;
@@ -109,6 +117,8 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
                     }
                 }
                 inboundMessage = null;
+            } catch (InterruptedException e) {
+                throw new InterruptedException();
             } catch (UnsupportedEncodingException e) {
                 errorMessage("UnsupportedEncodingException (channel = " + channel.getName() + ") ", e);
                 inboundMessage = null;
@@ -121,7 +131,7 @@ public class AsyncSmsServerPrepareMessage  extends AsyncSmsServerChild {
         }
     }
 
-    private void createMessage(ByteBuffer byteMessage, byte esmClass) throws IOException {
+    private void createMessage(ByteBuffer byteMessage, byte esmClass) throws IOException, InterruptedException {
         MessageStatus messageStatus = statusDAO.getByName("WAITING_SEND");
         Message message = new Message();
         message.setPayload(channel.isPayload());

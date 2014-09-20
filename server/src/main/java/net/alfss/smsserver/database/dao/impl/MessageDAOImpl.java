@@ -18,6 +18,7 @@ import java.util.List;
  * Date: 09.12.13
  * Time: 15:30
  */
+//TODO: нужно обрабатовать ошибки при падении коннекта!
 public class MessageDAOImpl implements MessageDAO {
 
     private MessageStatusDAOImpl statusDAO = new MessageStatusDAOImpl();

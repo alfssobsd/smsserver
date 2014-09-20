@@ -15,6 +15,7 @@ import java.util.List;
  * Date: 09.12.13
  * Time: 16:50
  */
+//TODO: нужно обрабатовать ошибки при падении коннекта!
 public class ChannelDAOImpl implements ChannelDAO {
 
     @Override

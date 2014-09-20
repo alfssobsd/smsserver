@@ -24,17 +24,17 @@ import org.smpp.pdu.SubmitSMResp;
  * Date: 16.11.13
  * Time: 7:15
  */
-public class AsyncSmsServerEventListener extends SmppObject implements ServerPDUEventListener {
+public class SmsServerEventListener extends SmppObject implements ServerPDUEventListener {
 
     private final Channel channel;
     private final QueueDirectResponse responseQueue;
     private final MessageDAOImpl messageDAO;
 
-    final Logger logger = (Logger) LoggerFactory.getLogger(AsyncSmsServerEventListener.class);
+    final Logger logger = (Logger) LoggerFactory.getLogger(SmsServerEventListener.class);
 
 
     //TODO: убедится что все ошибки обрабатываются.
-    public AsyncSmsServerEventListener(GlobalConfig config, Channel channel) {
+    public SmsServerEventListener(GlobalConfig config, Channel channel) {
         this.channel = channel;
         this.messageDAO = new MessageDAOImpl();
         this.responseQueue = new QueueDirectResponse(config, channel, false);
@@ -128,7 +128,8 @@ public class AsyncSmsServerEventListener extends SmppObject implements ServerPDU
 
     }
 
-    private void handlerDeliver(DeliverSM deliverSM, PDU pdu) {
+//TODO: разобраться с InterruptedException
+    private void handlerDeliver(DeliverSM deliverSM, PDU pdu) throws InterruptedException {
         logger.debug(channel.getName() + ":async deliverSM" + deliverSM.debugString());
         try {
             responseQueue.publish(new ResponseMessage(deliverSM.getShortMessage(), pdu.getSequenceNumber()));

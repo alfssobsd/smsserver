@@ -89,15 +89,15 @@ public abstract class Queue {
         return consumer;
     }
 
-    protected void initConnect(Channel channel) throws IOException {
+    protected void initConnect(Channel channel) throws IOException, InterruptedException {
         createQueue(channel);
         if (enableConsumer) setConsumer(createConsumer(getQueueName(), false, channel));
         setNeedInit(false);
     }
 
-    protected void createQueue(Channel channel) throws IOException { }
+    protected void createQueue(Channel channel) throws IOException, InterruptedException { }
 
-    protected void checkNeedInit(Channel channel) throws IOException {
+    protected void checkNeedInit(Channel channel) throws IOException, InterruptedException {
         if (isNeedInit()) {
             initConnect(channel);
         }

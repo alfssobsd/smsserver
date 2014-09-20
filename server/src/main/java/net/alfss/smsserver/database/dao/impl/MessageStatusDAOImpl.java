@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
  * Date: 19.03.14
  * Time: 16:43
  */
+//TODO: нужно обрабатовать ошибки при падении коннекта!
 public class MessageStatusDAOImpl implements MessageStatusDAO {
     @Override
     public MessageStatus get(int statusId) {

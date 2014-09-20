@@ -28,7 +28,7 @@ public abstract class QueueDirectMessage<T> extends Queue {
     }
 
     @Override
-    protected void createQueue(Channel channel) throws IOException {
+    protected void createQueue(Channel channel) throws IOException, InterruptedException {
         Map<String, Object> arguments = new HashMap<>();
         //Need only for rabbitmq < 3.0
         //arguments.put("x-ha-policy", "all");
@@ -41,13 +41,17 @@ public abstract class QueueDirectMessage<T> extends Queue {
         }
     }
 
-    public void publish(T message) {
+    public void publish(T message) throws InterruptedException {
         Channel channel = null;
         try {
             channel = pool.getResource();
             checkNeedInit(channel);
             channel.basicPublish("", getExchangeName(), MessageProperties.PERSISTENT_BASIC, message.toString().getBytes());
             pool.returnResource(channel);
+        } catch (InterruptedException e) {
+            setNeedInit(true);
+            pool.returnBrokenResource(channel);
+            throw new InterruptedException();
         } catch (Exception e) {
             setNeedInit(true);
             pool.returnBrokenResource(channel);
@@ -57,7 +61,7 @@ public abstract class QueueDirectMessage<T> extends Queue {
 
 
     @SuppressWarnings("unchecked")
-    public T getNextMessage() {
+    public T getNextMessage() throws InterruptedException {
         Channel channel = null;
         try {
             channel = pool.getResource();
@@ -71,6 +75,10 @@ public abstract class QueueDirectMessage<T> extends Queue {
         } catch (JsonMappingException | JsonParseException e ) {
             pool.returnResource(channel);
             throw new RabbitMqQueueMappingException(e);
+        } catch (InterruptedException e) {
+            setNeedInit(true);
+            pool.returnBrokenResource(channel);
+            throw new InterruptedException();
         } catch (Exception e) {
             setNeedInit(true);
             pool.returnBrokenResource(channel);

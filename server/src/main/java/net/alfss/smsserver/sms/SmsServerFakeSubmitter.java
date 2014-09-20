@@ -19,13 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Date: 04.07.14
  * Time: 15:21
  */
-public class AsyncSmsServerFakeSubmitter extends AsyncSmsServerChild {
+public class SmsServerFakeSubmitter extends AsyncSmsServerChild {
     private final QueueDirectSend sendQueue;
     private final MessageDAOImpl messageDAO;
 
 
-    public AsyncSmsServerFakeSubmitter(GlobalConfig config, Channel channel, SmsServerConnectPool connectPool, RateLimiter rateLimiter, AtomicInteger seqNumber) {
-        super(config, channel, connectPool, rateLimiter, seqNumber);
+    public SmsServerFakeSubmitter(GlobalConfig config, Channel channel, SmsServerConnectPool connectPool, int numberConnection, RateLimiter rateLimiter, AtomicInteger seqNumber) {
+        super(config, channel, connectPool, numberConnection, rateLimiter, seqNumber);
         this.messageDAO = new MessageDAOImpl();
         this.sendQueue = new QueueDirectSend(config, channel, true);
     }
@@ -37,6 +37,9 @@ public class AsyncSmsServerFakeSubmitter extends AsyncSmsServerChild {
         do {
             try {
                 waitMessage();
+            } catch (InterruptedException e) {
+                debugMessage("Interrupted");
+                setRunning(false);
             } catch (RabbitMqQueueConnectException | RabbitMqException e) {
                 waitRecconectRabbitMq(sendQueue);
             } catch (DatabaseError e) {
@@ -47,11 +50,13 @@ public class AsyncSmsServerFakeSubmitter extends AsyncSmsServerChild {
             } catch (Exception e) {
                 debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
             }
-        } while (isRunning() & !isInterrupted());
+        } while (isRunning());
+
+        errorMessage("stop (channel = " + channel.getName() + ")");
 
     }
 
-    private void waitMessage() {
+    private void waitMessage() throws InterruptedException {
         int id = Integer.parseInt(sendQueue.getNextMessage());
         Message message = messageDAO.get(id);
         if (message != null) {

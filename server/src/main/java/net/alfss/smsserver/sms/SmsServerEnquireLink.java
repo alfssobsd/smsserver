@@ -19,14 +19,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Date: 25.11.13
  * Time: 16:02
  */
-public class AsyncSmsServerEnquireLink extends AsyncSmsServerChild {
+public class SmsServerEnquireLink extends AsyncSmsServerChild {
 
-    public AsyncSmsServerEnquireLink(GlobalConfig config,
-                                     Channel channel,
-                                     SmsServerConnectPool connectPool,
-                                     RateLimiter rateLimiter,
-                                     AtomicInteger seqNumber) {
-        super(config, channel, connectPool, rateLimiter, seqNumber);
+    public SmsServerEnquireLink(GlobalConfig config,
+                                Channel channel,
+                                SmsServerConnectPool connectPool,
+                                int numberConnection,
+                                RateLimiter rateLimiter,
+                                AtomicInteger seqNumber) {
+        super(config, channel, connectPool, numberConnection, rateLimiter, seqNumber);
     }
 
 
@@ -39,7 +40,7 @@ public class AsyncSmsServerEnquireLink extends AsyncSmsServerChild {
                 sleep(channel.getSmppEnquireLinkInterval() * 1000);
                 enquireLinkRequest();
             } catch (InterruptedException e) {
-                debugMessage("InterruptedException", e);
+                debugMessage("Interrupted");
                 setRunning(false);
             } catch (SmsServerException e) {
                 debugMessage("error Invalidated object", e);
@@ -48,7 +49,9 @@ public class AsyncSmsServerEnquireLink extends AsyncSmsServerChild {
             } catch (Exception e) {
                 debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
             }
-        } while (isRunning() & !isInterrupted());
+        } while (isRunning());
+
+        errorMessage("stop (channel = " + channel.getName() + ")");
     }
 
     private void enquireLinkRequest() {

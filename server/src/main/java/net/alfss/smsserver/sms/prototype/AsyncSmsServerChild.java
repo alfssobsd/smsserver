@@ -25,11 +25,13 @@ public class AsyncSmsServerChild extends Thread implements AsyncSmsServerThreadI
     protected final Channel channel;
     protected final SmsServerConnectPool connectPool;
     protected boolean running = false;
+    protected int numberConnection;
     protected final Logger logger = (Logger) LoggerFactory.getLogger(String.valueOf(this.getClass()));
 
     public AsyncSmsServerChild(GlobalConfig config,
                                Channel channel,
                                SmsServerConnectPool connectPool,
+                               int numberConnection,
                                RateLimiter rateLimiter,
                                AtomicInteger seqNumber) {
         this.config = config;
@@ -37,6 +39,7 @@ public class AsyncSmsServerChild extends Thread implements AsyncSmsServerThreadI
         this.rateLimiter = rateLimiter;
         this.seqNumber = seqNumber;
         this.connectPool = connectPool;
+        this.numberConnection = numberConnection;
         this.session = null;
         setThreadName();
 
@@ -59,7 +62,7 @@ public class AsyncSmsServerChild extends Thread implements AsyncSmsServerThreadI
 
     @Override
     public void setThreadName() {
-        setName(this.getClass().getSimpleName() + '-' + channel.getName());
+        setName(this.getClass().getSimpleName() + '-' + channel.getName() + " connection = " + numberConnection);
     }
 
 

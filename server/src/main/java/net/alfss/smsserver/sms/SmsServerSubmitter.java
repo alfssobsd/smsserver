@@ -34,12 +34,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Date: 28.11.13
  * Time: 13:13
  */
-public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
+public class SmsServerSubmitter extends AsyncSmsServerChild {
     private final QueueDirectSend sendQueue;
     private final MessageDAOImpl messageDAO;
 
-    public AsyncSmsServerSubmitter(GlobalConfig config, Channel channel, SmsServerConnectPool connectPool, RateLimiter rateLimiter, AtomicInteger seqNumber) {
-        super(config, channel, connectPool, rateLimiter, seqNumber);
+    public SmsServerSubmitter(GlobalConfig config, Channel channel, SmsServerConnectPool connectPool, int numberConnection, RateLimiter rateLimiter, AtomicInteger seqNumber) {
+        super(config, channel, connectPool, numberConnection, rateLimiter, seqNumber);
         this.messageDAO = new MessageDAOImpl();
         this.sendQueue = new QueueDirectSend(config, channel, true);
     }
@@ -52,6 +52,9 @@ public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
             try {
                 waitMessage();
                 rateLimiter.acquire();
+            } catch (InterruptedException e) {
+                errorMessage("Interrupted");
+                setRunning(false);
             } catch (SmsServerException e) {
                 errorMessage("error Invalidated object", e);
                 waitRecconectSmpp();
@@ -65,11 +68,13 @@ public class AsyncSmsServerSubmitter extends AsyncSmsServerChild {
             } catch (Exception e) {
                 debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
             }
-        } while (isRunning() & !isInterrupted());
+        } while (isRunning());
+
+        errorMessage("stop (channel = " + channel.getName() + ")");
     }
 
 
-    private void waitMessage() {
+    private void waitMessage() throws InterruptedException {
         int id = Integer.parseInt(sendQueue.getNextMessage());
         Message message = messageDAO.get(id);
         message.setSequenceNumber(seqNumber.incrementAndGet());
