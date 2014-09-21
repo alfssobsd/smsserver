@@ -1,5 +1,9 @@
 class Settings < Settingslogic
-  source ENV.fetch('WEB_SMSSERVER_CONFIG') { "#{Rails.root}/config/web-smsserver.yml" }
+  if File.exist?("#{Rails.root}/config/web-smsserver-local.yml")
+    source ENV.fetch('WEB_SMSSERVER_CONFIG') { "#{Rails.root}/config/web-smsserver-local.yml" }
+  else
+    source ENV.fetch('WEB_SMSSERVER_CONFIG') { "#{Rails.root}/config/web-smsserver.yml" }
+  end
   namespace Rails.env
 end
 
