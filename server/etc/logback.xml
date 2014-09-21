@@ -5,7 +5,8 @@
     <appender name="AnyLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/tmp/smsserver/app.log</file>
         <encoder>
-            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %class [%thread] %-5level - %msg %ex %n</pattern>
+            <!--<pattern>[%d{yyyy-MM-dd - HH:mm:ss}] %class [%thread] %-5level - %msg %ex %n</pattern>-->
+            <pattern>[%d{yyyy-MM-dd - HH:mm:ss}] [%thread] %-5level - %msg %ex %n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
