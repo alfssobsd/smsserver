@@ -64,7 +64,7 @@ public class SmsServerPrepareMessage extends AsyncSmsServerChild {
             } catch (InterruptedException e) {
                debugMessage("Interrupted");
                setRunning(false);
-            } catch (RabbitMqQueueConnectException | RabbitMqException e) {
+            } catch (RabbitMqException | RabbitMqQueueConnectException e) {
                 waitRecconectRabbitMq(sendQueue);
             } catch (DatabaseError e) {
                 errorMessage("error ", e);
@@ -93,10 +93,9 @@ public class SmsServerPrepareMessage extends AsyncSmsServerChild {
         } catch (RabbitMqQueueMappingException e ){
             errorMessage("error parse InboundMessage (channel = " + channel.getName() + ") ", e);
             inboundMessage = null;
-        } catch (RabbitMqQueueConnectException e) {
+        } catch (RabbitMqQueueConnectException | RabbitMqException e) {
             errorMessage("error read InboundMessage (channel = " + channel.getName() + ") ", e);
-        } catch (Exception e) {
-            debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
+            throw new RabbitMqException(e);
         }
 
         //push message
@@ -122,10 +121,10 @@ public class SmsServerPrepareMessage extends AsyncSmsServerChild {
             } catch (UnsupportedEncodingException e) {
                 errorMessage("UnsupportedEncodingException (channel = " + channel.getName() + ") ", e);
                 inboundMessage = null;
-            } catch (RabbitMqQueueConnectException e) {
+            } catch (RabbitMqQueueConnectException | RabbitMqException e) {
                 errorMessage("error write id message to rabbitmq (channel = " + channel.getName() + ") ", e);
-            } catch (Exception e) {
-                debugMessage("WTF Exception!!! " + channel.getName() + " ", e);
+                throw new RabbitMqQueueConnectException(e);
+            } catch (IOException e) {
                 inboundMessage = null;
             }
         }
