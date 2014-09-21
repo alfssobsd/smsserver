@@ -40,8 +40,10 @@ public class SmsServerMaster extends Thread {
         poolConfig.setMaxTotal(1);
 
         ChannelConnectionDAOImpl channelConnectionDAO = new ChannelConnectionDAOImpl();
-        for (Object obj: channelConnectionDAO.getList(channel)) {
-            this.connectPoolList.add(new SmsServerConnectPool(poolConfig, config, channel, (ChannelConnection) obj));
+        for (ListIterator iterator = channelConnectionDAO.getList(channel).listIterator(); iterator.hasNext();) {
+            int numberConnection = iterator.nextIndex() + 1;
+            ChannelConnection obj  = (ChannelConnection) iterator.next();
+            this.connectPoolList.add(new SmsServerConnectPool(poolConfig, config, channel, obj, numberConnection));
         }
     }
 

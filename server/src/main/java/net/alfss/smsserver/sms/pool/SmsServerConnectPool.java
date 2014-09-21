@@ -28,8 +28,8 @@ import org.smpp.pdu.Response;
 public class SmsServerConnectPool extends Pool<Session> {
     final Logger logger = (Logger) LoggerFactory.getLogger(SmsServerConnectPool.class);
 
-    public SmsServerConnectPool(final GenericObjectPoolConfig poolConfig, GlobalConfig config, final Channel channel, final ChannelConnection channelConnection) {
-        super(poolConfig, new SmsServerFactory(config ,channel, channelConnection));
+    public SmsServerConnectPool(final GenericObjectPoolConfig poolConfig, GlobalConfig config, final Channel channel, final ChannelConnection channelConnection, int numberConnection) {
+        super(poolConfig, new SmsServerFactory(config ,channel, channelConnection, numberConnection));
     }
 
     private static class SmsServerFactory extends BasePooledObjectFactory<Session> {
@@ -38,11 +38,13 @@ public class SmsServerConnectPool extends Pool<Session> {
         private final Channel channel;
         private final ChannelConnection channelConnection;
         private final GlobalConfig config;
+        private final int numberConnection;
 
-        public SmsServerFactory(GlobalConfig config, Channel channel, ChannelConnection channelConnection) {
+        public SmsServerFactory(GlobalConfig config, Channel channel, ChannelConnection channelConnection, int numberConnection) {
             this.channel = channel;
             this.channelConnection = channelConnection;
             this.config = config;
+            this.numberConnection = numberConnection;
         }
 
         @Override
@@ -57,7 +59,7 @@ public class SmsServerConnectPool extends Pool<Session> {
             bindRequest.setPassword(channel.getSmppPassword());
             bindRequest.setSystemType(channelConnection.getSmppSystemType());
             bindRequest.setAddressRange("");
-            SmsServerEventListener pduListener = new SmsServerEventListener(config, channel);
+            SmsServerEventListener pduListener = new SmsServerEventListener(config, channel, numberConnection);
             Response response = session.bind(bindRequest, pduListener);
             if(response.getCommandStatus() != Data.ESME_ROK) {
                 throw  new SmsServerConnectionException("Error connect STATUS = " + response.getCommandStatus());
