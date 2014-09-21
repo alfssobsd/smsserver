@@ -48,7 +48,6 @@ public class SmsServerDeliverResponser extends AsyncSmsServerChild {
             try {
                 waitResponseMessage();
                 rateLimiter.acquire();
-                errorMessage(String.valueOf(isInterrupted()));
             } catch (InterruptedException e) {
                 debugMessage("Interrupted");
                 setRunning(false);
