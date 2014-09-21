@@ -10,26 +10,26 @@
 
 
     <properties>
-        <jetty.version>9.1.0.M0</jetty.version>
-        <jetty.jsp.version>9.1.0.M0</jetty.jsp.version>
+        <jetty.version>9.2.3.v20140905</jetty.version>
+        <jetty.jsp.version>9.2.3.v20140905</jetty.jsp.version>
         <jstl.version>1.2</jstl.version>
         <spring.version>4.0.7.RELEASE</spring.version>
         <spring.security.version>3.2.0.RC1</spring.security.version>
         <springmvc.router.version>1.2.0</springmvc.router.version>
         <opensmpp.version>3.0.0</opensmpp.version>
-        <rabbitmq.version>3.1.4</rabbitmq.version>
+        <rabbitmq.version>3.3.5</rabbitmq.version>
         <common-daemons.version>1.0.15</common-daemons.version>
         <common-cli.version>1.2</common-cli.version>
         <commons-configuration.version>1.9</commons-configuration.version>
-        <logback.version>1.0.13</logback.version>
-        <jackson.version>2.2.3</jackson.version>
-        <testng.version>6.8.7</testng.version>
-        <jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
-        <guava.version>15.0</guava.version>
+        <logback.version>1.1.2</logback.version>
+        <jackson.version>2.4.2</jackson.version>
+        <testng.version>6.8.8</testng.version>
+        <jcl-over-slf4j.version>1.7.7</jcl-over-slf4j.version>
+        <guava.version>18.0</guava.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-pool2.version>2.0</commons-pool2.version>
-        <hibernate.version>4.2.8.Final</hibernate.version>
-        <postgres.jdbc.version>9.3-1100-jdbc41</postgres.jdbc.version>
+        <commons-pool2.version>2.2</commons-pool2.version>
+        <hibernate.version>4.2.15.Final</hibernate.version>
+        <postgres.jdbc.version>9.3-1102-jdbc41</postgres.jdbc.version>
 
     </properties>
 
