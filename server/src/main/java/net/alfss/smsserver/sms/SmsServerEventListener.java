@@ -29,15 +29,17 @@ public class SmsServerEventListener extends SmppObject implements ServerPDUEvent
     private final Channel channel;
     private final QueueDirectResponse responseQueue;
     private final MessageDAOImpl messageDAO;
+    private final String loggerDescriptionName;
 
     final Logger logger = (Logger) LoggerFactory.getLogger(SmsServerEventListener.class);
 
 
     //TODO: убедится что все ошибки обрабатываются.
-    public SmsServerEventListener(GlobalConfig config, Channel channel) {
+    public SmsServerEventListener(GlobalConfig config, Channel channel, int numberConnection) {
         this.channel = channel;
         this.messageDAO = new MessageDAOImpl();
         this.responseQueue = new QueueDirectResponse(config, channel, false);
+        loggerDescriptionName = this.getClass().getSimpleName() + '-' + channel.getName() + " connection = " + numberConnection;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class SmsServerEventListener extends SmppObject implements ServerPDUEvent
                 if (commandId == Data.DELIVER_SM) {
                     handlerDeliver((DeliverSM) pdu, pdu);
                 } else {
-                    logger.error(channel.getName() + ":async request received not implement" + pdu.debugString());
+                    errorMessage(channel.getName() + ":async request received not implement" + pdu.debugString());
                 }
             } else if (pdu.isResponse()) {
                 if (pdu.getClass() == EnquireLinkResp.class) {
@@ -58,14 +60,14 @@ public class SmsServerEventListener extends SmppObject implements ServerPDUEvent
                 } else if (pdu.getClass() == SubmitSMResp.class) {
                     handlerSubmitSMResp((SubmitSMResp) pdu);
                 } else {
-                    logger.debug(channel.getName() + ":async response received " + pdu.debugString());
+                    debugMessage(channel.getName() + ":async response received " + pdu.debugString());
                 }
             } else {
-                logger.error(channel.getName() + ":pdu of unknown class (not request nor " + "response)" +
+                errorMessage(channel.getName() + ":pdu of unknown class (not request nor " + "response)" +
                         " received, discarding " + pdu.debugString());
             }
         } catch (Exception e) {
-            logger.debug(channel.getName(), e);
+            debugMessage(channel.getName(), e);
         }
     }
 
@@ -88,21 +90,21 @@ public class SmsServerEventListener extends SmppObject implements ServerPDUEvent
 
 
     private void handlerEnquireLinkResp(EnquireLinkResp response) {
-        logger.debug("AsyncSmsServerEventListener: EnquireLinkResp channel = " + channel.getName() + " received " + response.debugString());
+        debugMessage("AsyncSmsServerEventListener: EnquireLinkResp channel = " + channel.getName() + " received " + response.debugString());
         if(response.getCommandStatus() != Data.ESME_ROK) {
-            logger.error("SmsServerTransmitter: enquireLinkRequest error messageStatus (channel =  " +
+            errorMessage("SmsServerTransmitter: enquireLinkRequest error messageStatus (channel =  " +
                     channel.getName() + ") messageStatus = " + response.getCommandStatus());
 //            throw new SmsServerConnectionException("AsyncSmsServerEventListener: Error enquireLink");
         }
-        logger.debug("SmsServerTransmitter: enquireLinkRequest success (channel =  " +
+        debugMessage("SmsServerTransmitter: enquireLinkRequest success (channel =  " +
                 channel.getName() + ") messageStatus = " + response.getCommandStatus());
 
     }
 
 
     private void handlerSubmitSMResp(SubmitSMResp response) {
-        logger.debug("messageId:" + response.getMessageId());
-        logger.debug("SequenceNumber:" + response.getSequenceNumber());
+        debugMessage("messageId:" + response.getMessageId());
+        debugMessage("SequenceNumber:" + response.getSequenceNumber());
 
         Message message = messageDAO.getWaitResponse(response.getSequenceNumber(), channel);
         switch (response.getCommandStatus()) {
@@ -110,16 +112,16 @@ public class SmsServerEventListener extends SmppObject implements ServerPDUEvent
             case Data.ESME_ROK:
                 message.setMessageSmsId(response.getMessageId());
                 messageDAO.setStatusWaiteDelivery(message);
-                logger.debug("SmsServerTransmitter: sendMessage messageId = submission submitted  (channel =  " +
+                debugMessage("SmsServerTransmitter: sendMessage messageId = submission submitted  (channel =  " +
                         channel.getName() + ") messageStatus = " + response.getCommandStatus());
                 break;
             case Data.ESME_RMSGQFUL:
-                logger.error("SmsServerTransmitter: smpp server queue is full  (channel =  " +
+                errorMessage("SmsServerTransmitter: smpp server queue is full  (channel =  " +
                         channel.getName() + ") messageStatus = " + response.getCommandStatus());
                 messageDAO.setStatusFail(message);
 //                throw new SmsServerConnectionException("AsyncSmsServerEventListener: submit ESME_RMSGQFUL");
             default:
-                logger.error("SmsServerTransmitter: sendMessage submission failed  (channel =  " +
+                errorMessage("SmsServerTransmitter: sendMessage submission failed  (channel =  " +
                         channel.getName() + ") messageStatus = " + response.getCommandStatus());
                 messageDAO.setStatusFail(message);
 //                throw new SmsServerConnectionException("AsyncSmsServerEventListener: submit ESME_RMSGQFUL");
@@ -130,14 +132,33 @@ public class SmsServerEventListener extends SmppObject implements ServerPDUEvent
 
 //TODO: разобраться с InterruptedException
     private void handlerDeliver(DeliverSM deliverSM, PDU pdu) throws InterruptedException {
-        logger.debug(channel.getName() + ":async deliverSM" + deliverSM.debugString());
+        debugMessage(channel.getName() + ":async deliverSM" + deliverSM.debugString());
         try {
             responseQueue.publish(new ResponseMessage(deliverSM.getShortMessage(), pdu.getSequenceNumber()));
         } catch (SmsServerException | RabbitMqQueueConnectException e) {
-            logger.error("Error connect to RabbitMQ ");
+            errorMessage("Error connect to RabbitMQ ");
         }
     }
 
+    protected void debugMessage(String s, Throwable e) {
+        logger.debug("[ {} ]: {}", loggerDescriptionName, s, e);
+    }
+
+    protected void debugMessage(String s) {
+        logger.debug("[ {} ]: {}", loggerDescriptionName, s);
+    }
+
+    protected void errorMessage(String s, Throwable e) {
+        logger.error("[ {} ] : {}", loggerDescriptionName, s, e) ;
+    }
+
+    protected void errorMessage(String s) {
+        logger.error("[ {} ] : {}", loggerDescriptionName, s);
+    }
+
+    protected void infoMessage(String s) {
+        logger.info("[ {} ] : {}", loggerDescriptionName, s);
+    }
 }
 
 
