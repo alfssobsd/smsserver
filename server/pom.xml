@@ -13,10 +13,9 @@
         <jetty.version>9.1.0.M0</jetty.version>
         <jetty.jsp.version>9.1.0.M0</jetty.jsp.version>
         <jstl.version>1.2</jstl.version>
-        <spring.version>3.2.4.RELEASE</spring.version>
+        <spring.version>4.0.7.RELEASE</spring.version>
         <spring.security.version>3.2.0.RC1</spring.security.version>
         <springmvc.router.version>1.2.0</springmvc.router.version>
-        <tiles.version>3.0.1</tiles.version>
         <opensmpp.version>3.0.0</opensmpp.version>
         <rabbitmq.version>3.1.4</rabbitmq.version>
         <common-daemons.version>1.0.15</common-daemons.version>
@@ -24,14 +23,12 @@
         <commons-configuration.version>1.9</commons-configuration.version>
         <logback.version>1.0.13</logback.version>
         <jackson.version>2.2.3</jackson.version>
-        <jedis.version>2.2.1</jedis.version>
         <testng.version>6.8.7</testng.version>
         <jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
         <guava.version>15.0</guava.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-pool2.version>2.0</commons-pool2.version>
         <hibernate.version>4.2.8.Final</hibernate.version>
-        <flywaydb.version>2.3</flywaydb.version>
         <postgres.jdbc.version>9.3-1100-jdbc41</postgres.jdbc.version>
 
     </properties>
@@ -167,54 +164,6 @@
             <artifactId>springmvc-router</artifactId>
             <version>${springmvc.router.version}</version>
         </dependency>
-
-
-
-
-        <!--  Tiles  Aapache template -->
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-extras</artifactId>
-            <version>${tiles.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-api</artifactId>
-            <version>${tiles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-core</artifactId>
-            <version>${tiles.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-            <version>${tiles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-servlet</artifactId>
-            <version>${tiles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-template</artifactId>
-            <version>${tiles.version}</version>
-        </dependency>
-
 
         <!-- Jetty -->
         <dependency>
@@ -353,25 +302,11 @@
             <version>${jackson.version}</version>
         </dependency>
 
-        <!-- Redis -->
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>${jedis.version}</version>
-        </dependency>
-
         <!-- Hibbirnae -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
-        </dependency>
-
-        <!-- flywaydb -->
-        <dependency>
-            <groupId>com.googlecode.flyway</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>${flywaydb.version}</version>
         </dependency>
 
         <dependency>
