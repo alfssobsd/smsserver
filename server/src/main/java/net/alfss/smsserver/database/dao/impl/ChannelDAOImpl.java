@@ -6,6 +6,7 @@ import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.TransactionException;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
@@ -26,6 +27,9 @@ public class ChannelDAOImpl implements ChannelDAO {
             Channel channel = (Channel) session.get(Channel.class, channelId);
             session.getTransaction().commit();
             return channel;
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -39,6 +43,43 @@ public class ChannelDAOImpl implements ChannelDAO {
             session.beginTransaction();
             session.save(channel);
             session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
+        } catch (RuntimeException e ) {
+            session.getTransaction().rollback();
+            throw new DatabaseError(e);
+        }
+    }
+
+    @Override
+    public void enable(Channel channel) {
+        Session session = getSession();
+        try {
+            session.beginTransaction();
+            channel.setEnable(true);
+            session.update(channel);
+            session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
+        } catch (RuntimeException e ) {
+            session.getTransaction().rollback();
+            throw new DatabaseError(e);
+        }
+    }
+
+    @Override
+    public void disable(Channel channel) {
+        Session session = getSession();
+        try {
+            session.beginTransaction();
+            channel.setEnable(false);
+            session.update(channel);
+            session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -55,6 +96,9 @@ public class ChannelDAOImpl implements ChannelDAO {
             List list =  criteria.list();
             session.getTransaction().commit();
             return list;
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);

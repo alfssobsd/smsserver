@@ -9,6 +9,6 @@ import java.util.Map;
  */
 public interface ChannelControl {
 
-    public boolean startChannel(String json, Map<String,String> header);
-    public boolean stopChannel(String json, Map<String,String> header);
+    public String startChannel(String json, Map<String,String> header);
+    public String stopChannel(String json, Map<String,String> header);
 }

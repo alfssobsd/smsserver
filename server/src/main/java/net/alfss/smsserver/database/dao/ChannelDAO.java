@@ -12,5 +12,7 @@ import java.util.List;
 public interface ChannelDAO {
     public Channel get(int channelId);
     public void create(Channel channel);
+    public void enable(Channel channel);
+    public void disable(Channel channel);
     public List getAllEnableList();
 }

@@ -6,6 +6,7 @@ import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.TransactionException;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -23,6 +24,9 @@ public class MessageStatusDAOImpl implements MessageStatusDAO {
             MessageStatus messageStatus = (MessageStatus) session.get(MessageStatus.class, statusId);
             session.getTransaction().commit();
             return messageStatus;
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -40,6 +44,9 @@ public class MessageStatusDAOImpl implements MessageStatusDAO {
             MessageStatus messageStatus =  (MessageStatus) queryCriteria.list().get(0);
             session.getTransaction().commit();
             return messageStatus;
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);

@@ -8,6 +8,7 @@ import net.alfss.smsserver.database.exceptions.DatabaseError;
 import net.alfss.smsserver.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.TransactionException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -31,6 +32,9 @@ public class MessageDAOImpl implements MessageDAO {
             Message message = (Message) session.get(Message.class, messageId);
             session.getTransaction().commit();
             return message;
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -45,6 +49,9 @@ public class MessageDAOImpl implements MessageDAO {
             int id = (Integer) session.save(message);
             session.getTransaction().commit();
             return id;
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -66,6 +73,9 @@ public class MessageDAOImpl implements MessageDAO {
             session.beginTransaction();
             session.update(message);
             session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -88,7 +98,7 @@ public class MessageDAOImpl implements MessageDAO {
             Message message = (Message) queryCriteria.list().get(0);
             session.getTransaction().commit();
             return  message;
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | TransactionException e) {
             session.getTransaction().rollback();
             throw e;
         } catch (RuntimeException e ) {
@@ -111,7 +121,7 @@ public class MessageDAOImpl implements MessageDAO {
             Message message = (Message) queryCriteria.list().get(0);
             session.getTransaction().commit();
             return message;
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | TransactionException e) {
             session.getTransaction().rollback();
             throw e;
         } catch (RuntimeException e ) {
@@ -134,6 +144,9 @@ public class MessageDAOImpl implements MessageDAO {
             message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -155,6 +168,9 @@ public class MessageDAOImpl implements MessageDAO {
             message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -176,6 +192,9 @@ public class MessageDAOImpl implements MessageDAO {
             message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -197,6 +216,9 @@ public class MessageDAOImpl implements MessageDAO {
             message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -218,6 +240,9 @@ public class MessageDAOImpl implements MessageDAO {
             message.setMessageStatus(messageStatus);
             session.update(message);
             session.getTransaction().commit();
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
@@ -245,6 +270,9 @@ public class MessageDAOImpl implements MessageDAO {
             List list =  criteria.list();
             session.getTransaction().commit();
             return list;
+        } catch (TransactionException e) {
+            session.getTransaction().rollback();
+            throw e;
         } catch (RuntimeException e ) {
             session.getTransaction().rollback();
             throw new DatabaseError(e);
