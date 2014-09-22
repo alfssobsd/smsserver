@@ -58,7 +58,7 @@ public class ChannelDAOImpl implements ChannelDAO {
         try {
             session.beginTransaction();
             channel.setEnable(true);
-            session.update(channel);
+            session.merge(channel);
             session.getTransaction().commit();
         } catch (TransactionException e) {
             session.getTransaction().rollback();
@@ -75,7 +75,7 @@ public class ChannelDAOImpl implements ChannelDAO {
         try {
             session.beginTransaction();
             channel.setEnable(false);
-            session.update(channel);
+            session.merge(channel);
             session.getTransaction().commit();
         } catch (TransactionException e) {
             session.getTransaction().rollback();

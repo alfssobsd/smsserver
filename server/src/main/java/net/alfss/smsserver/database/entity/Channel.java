@@ -1,5 +1,7 @@
 package net.alfss.smsserver.database.entity;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +12,7 @@ import java.util.Set;
  * Time: 17:02
  */
 @Entity
+@DynamicUpdate
 @Table(name="channels")
 public class Channel {
     @Id

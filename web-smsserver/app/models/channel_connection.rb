@@ -7,5 +7,4 @@ class ChannelConnection < ActiveRecord::Base
   def count_channel_connection
     return false if self.channel.channel_connections.length <= 1
   end
-
 end

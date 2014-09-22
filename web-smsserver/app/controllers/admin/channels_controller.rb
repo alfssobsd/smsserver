@@ -27,6 +27,12 @@ class Admin::ChannelsController < Admin::BaseController
   def update
     respond_to do |format|
       if @channel.update(channel_params)
+        sms_api = SmsServerWebApi.new
+        if @channel.is_enable
+          sms_api.start(@channel)
+        else
+          sms_api.stop(@channel)
+        end
         format.html { redirect_to admin_channels_edit_path(@channel), flash: {success: 'success update channel'} }
       else
         format.html { render action: 'edit' }

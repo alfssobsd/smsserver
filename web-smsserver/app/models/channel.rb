@@ -1,6 +1,5 @@
 class Channel < ActiveRecord::Base
   after_create :create_channel_connection
-  before_update :sms_server_chaneg_status
 
   has_many :channel_connections
   has_many :messages
@@ -47,16 +46,6 @@ class Channel < ActiveRecord::Base
     else
       page page
     end
-  end
-
-  private
-  def sms_server_chaneg_status
-    if self.attribute_changed?(:is_enable)
-      sms_api = SmsServerWebApi.new
-      sms_api.start(self) if is_enable
-      sms_api.stop(self) unless is_enable
-    end
-    true
   end
 
   private
