@@ -75,17 +75,22 @@ public class Master extends Thread {
 
     public static void startSmsServer(Channel channel) {
         synchronized (smsServerList) {
-            SmsServerMaster server = new SmsServerMaster(SharedConfig.getGlobalConfig(), channel);
-            smsServerList.put(channel.getChannelId(), server);
-            server.start();
+            SmsServerMaster server = smsServerList.get(channel.getChannelId());
+            if (server == null) {
+                server = new SmsServerMaster(SharedConfig.getGlobalConfig(), channel);
+                smsServerList.put(channel.getChannelId(), server);
+                server.start();
+            }
         }
     }
 
     public static void stopSmsServer(Channel channel) {
         synchronized (smsServerList) {
             SmsServerMaster server = smsServerList.get(channel.getChannelId());
-            smsServerList.remove(channel.getChannelId());
-            server.interrupt();
+            if (server != null) {
+                smsServerList.remove(channel.getChannelId());
+                server.interrupt();
+            }
         }
     }
 }

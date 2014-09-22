@@ -29,13 +29,10 @@ public class ChannelControlImpl implements ChannelControl {
     private GlobalConfigDAOImpl globalConfigDAO;
     private final ChannelDAOImpl channelDAO;
 
-
-
     public ChannelControlImpl () {
         channelDAO = new ChannelDAOImpl();
     }
 
-    //TODO: нельзя запускать сервер если он уже запущен
     @Override
     public String startChannel(String json, Map<String, String> header) {
 
