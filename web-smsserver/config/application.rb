@@ -24,6 +24,7 @@ module WebSmsserver
     # config.i18n.default_locale = :de
 
     config.autoload_paths += %W[#{config.root}/lib/rabbitsms/]
+    config.autoload_paths += %W[#{config.root}/lib/sms_server_web_api/]
     config.autoload_paths += %W[#{config.root}/lib/permissions/]
   end
 end

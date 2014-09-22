@@ -22,7 +22,6 @@ public class ChannelControl {
     @Autowired
     private ChannelControlImpl channelControl;
 
-//    TODO: завершить управление стартом и остановкой
     public ResponseEntity<String> start(@RequestBody String json, @RequestHeader Map<String,String> header) {
         String status = channelControl.startChannel(json, header);
 

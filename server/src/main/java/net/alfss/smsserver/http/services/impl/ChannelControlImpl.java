@@ -35,6 +35,7 @@ public class ChannelControlImpl implements ChannelControl {
         channelDAO = new ChannelDAOImpl();
     }
 
+    //TODO: нельзя запускать сервер если он уже запущен
     @Override
     public String startChannel(String json, Map<String, String> header) {
 
@@ -134,7 +135,9 @@ public class ChannelControlImpl implements ChannelControl {
     }
 
     private boolean enableAccess(Map<String, String> header) {
-        String token = header.get("X-TOKEN");
+//        logger.debug(header.toString());
+        String token = header.get("X-Token");
+//        logger.debug(token);
         return token != null && token.equals(globalConfigDAO.getJettyHttpToken());
     }
 }

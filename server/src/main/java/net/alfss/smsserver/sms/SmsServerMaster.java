@@ -47,8 +47,6 @@ public class SmsServerMaster extends Thread {
         }
     }
 
-    //TODO: нужно сохранять укозатели на запушенные smsServerStarter и нужен методо для рестарта
-    //TODO: требуется управление из вне, рестар и остановка
     @Override
     public void run() {
 
