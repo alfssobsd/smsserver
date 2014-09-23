@@ -3,7 +3,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
   def migrate(direction)
     super
     # Create a default user
-    User.create!(username: 'admin', email: 'admin@example.com', password: 'password', password_confirmation: 'password') if direction == :up
+    User.create!(username: 'admin', email: 'admin@example.com', password: 'password', password_confirmation: 'password', is_admin: true) if direction == :up
   end
 
   def change
@@ -15,6 +15,9 @@ class DeviseCreateUsers < ActiveRecord::Migration
 
       #API token
       t.string   :token,         default: nil, null: true
+
+      #admin flag
+      t.boolean  :is_admin,      default: false, null: false
 
       ## Recoverable
       t.string   :reset_password_token

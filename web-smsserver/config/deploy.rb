@@ -78,6 +78,7 @@ task :deploy => :environment do
     invoke :'deploy:link_shared_paths'
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
+    invoke :'deploy:cleanup'
     # system %[rsync ]
     # queue %[ echo $build_path ]
     # queue %[rsync -ar . ]
