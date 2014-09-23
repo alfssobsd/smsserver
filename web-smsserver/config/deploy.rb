@@ -70,7 +70,7 @@ desc "Deploys the current version to the server."
 task :deploy => :environment do
   deploy do
     system %[mkdir -p #{rsync_stage}]
-    system %[rsync -ar . #{rsync_stage}]
+    system %[rsync --recursive --delete . #{rsync_stage}]
     invoke "rsync:deploy"
     invoke :'bundle:install'
     invoke :'deploy:link_shared_paths'
