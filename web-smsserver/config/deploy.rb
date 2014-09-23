@@ -33,7 +33,7 @@ set :rsync_stage, '/tmp/deploy-smsserver'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['config/database.yml', 'log']
+set :shared_paths, ['config/database.yml', 'log', 'config/puma.rb', 'config/web-smsserver.yml']
 
 # Optional settings:
 set :user, 'rails'    # Username in the server to SSH to.
@@ -62,8 +62,10 @@ task :setup => :environment do
 
   queue! %[touch "#{deploy_to}/shared/config/database.yml"]
   queue! %[touch "#{deploy_to}/shared/config/web-smsserver.yml"]
+  queue! %[touch "#{deploy_to}/shared/config/puma.rb"]
   queue  %[echo "-----> Be sure to edit 'shared/config/web-smsserver.yml'."]
   queue  %[echo "-----> Be sure to edit 'shared/config/database.yml'."]
+  queue  %[echo "-----> Be sure to edit 'shared/config/puma.rb'."]
 end
 
 desc "Deploys the current version to the server."
