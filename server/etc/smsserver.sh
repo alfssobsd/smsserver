@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 
 ### BEGIN INIT INFO
 # Provides:          smsserver
@@ -14,20 +14,18 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-VERSION=0.1
-JAVA_HOME=/usr/lib/jvm/java-7-sun/jre/bin/java
+USER=smssrv
 LOGBACK=/etc/smsserver/logback.xml
 CONF=/etc/smsserver/smsserver.xml
 JSVC=/usr/bin/jsvc
-JVM_OPT="-Xms256m -Xmx1024m  -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+UseConcMarkSweepGC"
-PIDFILE=/var/run/smsserver.pid
-DAEMONJAR=/opt/smsserver/smsserver-$VERSION.jar
+PIDFILE=/var/run/smsserver/smsserver.pid
+DAEMONJAR=/opt/smsserver/smsserver-1.0.jar
 COMMON_DAEMON=/usr/share/java/commons-daemon.jar
 MAINCLASS=net.alfss.smsserver.Main
 JAVA=/usr/bin/java
 
 JAVA_HOME=""
-JDK_DIRS="/usr/lib/jvm/java-7-oracle /usr/lib/jvm/java-6-openjdk /usr/lib/jvm/java-6-sun /usr/lib/jvm/java-1.5.0-sun /usr/lib/j2sdk1.5-sun /usr/lib/j2sdk1.5-ibm"
+JDK_DIRS="/usr/lib/jvm/java-8-oracle /usr/lib/jvm/java-7-oracle"
 # Look for the right JVM to use
 for jdir in $JDK_DIRS; do
     if [ -r "$jdir/bin/java" -a -z "${JAVA_HOME}" ]; then
@@ -37,26 +35,28 @@ done
 
 test -f /etc/default/smsserver && . /etc/default/smsserver
 
+if [ ! -d /var/run/smsserver ]; then
+    mkdir -p /var/log/smsserver
+    mkdir -p /var/run/smsserver
+    chown ${USER}:${USER} /var/run/smsserver
+    chown ${USER}:${USER} /var/log/smsserver
+fi
 
 . /lib/lsb/init-functions
 
 case "$1" in
     start)
-        $JSVC -java-home $JAVA_HOME -jvm server -pidfile $PIDFILE -Dlogback.configurationFile=$LOGBACK $JVM_OPT \
-            -cp $DAEMONJAR $MAINCLASS -c $CONF
+        sudo -u ${USER} -H bash -c "$JSVC -java-home $JAVA_HOME -jvm server -pidfile $PIDFILE -Dlogback.configurationFile=$LOGBACK $JVM_OPT \
+            -cp $DAEMONJAR $MAINCLASS -c $CONF"
     ;;
 
     stop)
-        $JSVC -stop -pidfile $PIDFILE $MAINCLASS
+        sudo -u ${USER} -H bash -c "$JSVC -stop -pidfile $PIDFILE $MAINCLASS"
     ;;
 
     restart)
-	$0 stop
-	$0 start
-    ;;
-
-    regen)
-        $JAVA -Dlogback.configurationFile=$LOGBACK $JVM_OPT -jar $DAEMONJAR -c $CONF -g
+        $0 stop
+        $0 start
     ;;
 
     status)
@@ -75,12 +75,14 @@ case "$1" in
             exit 3
         fi
     ;;
-
-    *)
-	    log_action_msg "Usage: /etc/init.d/smsserver {start|stop|restart|regen}"
-	    exit 1
+    regen)
+        $JAVA -Dlogback.configurationFile=$LOGBACK $JVM_OPT -jar $DAEMONJAR -c $CONF -g
     ;;
 
+    *)
+        log_action_msg "Usage: /etc/init.d/smsserver { start | stop | restart | status | regen }"
+        exit 1
+    ;;
 esac
 
 exit 0
