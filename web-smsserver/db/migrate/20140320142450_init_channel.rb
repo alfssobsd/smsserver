@@ -18,7 +18,7 @@ class InitChannel < ActiveRecord::Migration
                       smpp_reconnect_timeout: 10,
                       smpp_enquire_link_interval: 60,
                       is_payload: false,
-                      is_fake: false,
+                      is_fake: true,
                       is_enable: true)
       channel.channel_connections.create!(smpp_system_type: "SINGLE")
 
